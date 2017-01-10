@@ -14,6 +14,8 @@ namespace Touhou_Daburu_W
         BulletManager mBulletManager;
         StageManager mStageManager;
 
+        InfoPrinter mInfoPrinter;
+
         public BulletGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -35,8 +37,11 @@ namespace Touhou_Daburu_W
             mStageManager = new StageManager();
             mStageManager.Init(mEnemyManager, mBulletManager);
             mPlayerManager.SetBulletManager(mBulletManager);
+            mEnemyManager.SetBulletManager(mBulletManager);
+
+            mInfoPrinter = new InfoPrinter();
+
             base.Initialize();
-            GraphicsDevice.Clear(Color.Black);
         }
 
         protected override void LoadContent()
@@ -45,6 +50,7 @@ namespace Touhou_Daburu_W
             mPlayerManager.LoadContent(this.Content);
             mEnemyManager.LoadContent(this.Content);
             mBulletManager.LoadContent(this.Content);
+            mInfoPrinter.LoadContent(this.Content);
         }
 
         protected override void UnloadContent()
@@ -58,6 +64,8 @@ namespace Touhou_Daburu_W
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            //mInfoPrinter.Update(gameTime);
+            
             mStageManager.Update(gameTime);
             mPlayerManager.Update(gameTime);
             mEnemyManager.Update(gameTime);
@@ -69,12 +77,13 @@ namespace Touhou_Daburu_W
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black*0.5f);
+            GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
             mBulletManager.Draw(spriteBatch);
             mEnemyManager.Draw(spriteBatch);
             mPlayerManager.Draw(spriteBatch);
+            mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
             spriteBatch.End();
             base.Draw(gameTime);
         }

@@ -78,6 +78,33 @@ namespace Touhou_Daburu_W
             mEnemyBullets.Add(bullet);
         }
 
+        public bool CheckCollisionEnemy(Rectangle hitbox)
+        {
+            bool result = false;
+            for (int i = 0; i < mEnemyBullets.Count; i++)
+            {
+                if(hitbox.Intersects(mEnemyBullets[i].mHitBox)){
+                    mEBDestroyQ.Add(i);
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        public bool CheckCollisionPlayer(Rectangle hitbox)
+        {
+            bool result = false;
+            for (int i = 0; i < mPlayerBullets.Count; i++)
+            {
+                if (hitbox.Intersects(mPlayerBullets[i].mHitBox))
+                {
+                    mPBDestroyQ.Add(i);
+                    result = true;
+                }
+            }
+            return result;
+        }
+
         public void SpawnPlayerBullet(SpriteAtlas atlas, string bulletType,
                                       Vector2 pos, Vector2 vel, Vector2 acc, Rectangle hitBox,
                                       bool angled)
@@ -90,7 +117,7 @@ namespace Touhou_Daburu_W
             bullet.mAcceleration = acc;
             bullet.mHitBox = hitBox;
             bullet.mDirectional = angled;
-            bullet.mAllied = true;
+            bullet.SetAllied();
 
             mPlayerBullets.Add(bullet);
         }

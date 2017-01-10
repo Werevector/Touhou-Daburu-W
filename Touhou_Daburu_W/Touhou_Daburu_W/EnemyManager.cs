@@ -19,6 +19,7 @@ namespace Touhou_Daburu_W
 
         List<Enemy> mEnemies;
         List<int> mEnemyDestroyQueue;
+        BulletManager mBulletManager;
 
         public EnemyManager()
         {
@@ -90,16 +91,59 @@ namespace Touhou_Daburu_W
             {
                 enemy.Update(gameTime);
             }
+            CheckEnemies();
+            ProccessDestroyQueues();
+        }
 
+        private void CheckEnemies()
+        {
+            for (int i = 0; i < mEnemies.Count; i++)
+            {
+                CheckEnemyBounds(i);
+                CheckEnemyCollisions(i);
+                CheckEnemyHealth(i);
+            }
         }
 
         private void CheckEnemyBounds()
         {
             for (int i = 0; i < mEnemies.Count; i++)
             {
-                if (Utility.IsWithinScreenBounds(100, mEnemies[i].GetHitbox()))
+                if (!Utility.IsWithinScreenBounds(100, mEnemies[i].GetHitbox()))
                     mEnemyDestroyQueue.Add(i);
             }
+        }
+        private void CheckCollisions()
+        {
+            for (int i = 0; i < mEnemies.Count; i++)
+            {
+                if (mBulletManager.CheckCollisionPlayer(mEnemies[i].GetHitbox()))
+                    mEnemies[i].TakeDamage(2);
+            }
+        }
+        private void CheckEnemyHealth()
+        {
+            for (int i = 0; i < mEnemies.Count; i++)
+            {
+                if (mEnemies[i].GetHealth() < 0)
+                    mEnemyDestroyQueue.Add(i);
+            }
+        }
+
+        private void CheckEnemyBounds(int i)
+        {
+            if (!Utility.IsWithinScreenBounds(100, mEnemies[i].GetHitbox()))
+                mEnemyDestroyQueue.Add(i);
+        }
+        private void CheckEnemyCollisions(int i)
+        {
+            if (mBulletManager.CheckCollisionPlayer(mEnemies[i].GetHitbox()))
+                mEnemies[i].TakeDamage(1);
+        }
+        private void CheckEnemyHealth(int i)
+        {
+            if (mEnemies[i].GetHealth() < 0)
+                mEnemyDestroyQueue.Add(i);
         }
 
         private void ProccessDestroyQueues()
@@ -117,6 +161,11 @@ namespace Touhou_Daburu_W
         {
             mEnemies.Clear();
             mEnemyDestroyQueue.Clear();
+        }
+
+        public void SetBulletManager(BulletManager manager)
+        {
+            mBulletManager = manager;
         }
     }
 }

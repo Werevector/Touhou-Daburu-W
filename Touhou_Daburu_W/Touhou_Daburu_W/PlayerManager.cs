@@ -31,13 +31,23 @@ namespace Touhou_Daburu_W
             mPlayerTwo = new Player();
             mPlayerOne.SetPosition(400, 200);
             mPlayerTwo.SetPosition(200, 200);
-            mPlayerTwo.SetComputerControlled(true);
+            //mPlayerTwo.SetComputerControlled(true);
         }
 
         public void Update(GameTime gameTime)
         {
             mPlayerOne.Update(gameTime);
             mPlayerTwo.Update(gameTime);
+            CheckPlayerCollisions();
+        }
+        
+        public void CheckPlayerCollisions()
+        {
+            if (!mPlayerOne.mDamaged && !mPlayerOne.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerOne.GetHitBox()))
+                mPlayerOne.TakeDamage();
+
+            //if (!mPlayerTwo.mDamaged && !mPlayerTwo.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerTwo.GetHitBox()))
+            //    mPlayerTwo.TakeDamage();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -91,6 +101,8 @@ namespace Touhou_Daburu_W
         public void SetBulletManager(BulletManager manager)
         {
             mBulletManager = manager;
+            mPlayerOne.mBulletManager = manager;
+            mPlayerTwo.mBulletManager = manager;
         }
 
     }

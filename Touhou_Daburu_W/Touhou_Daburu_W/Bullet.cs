@@ -78,5 +78,11 @@ namespace Touhou_Daburu_W
                 mBulletAtlas.Draw(spriteBatch, mBulletType, mBulletColor, mPosition, mAngle, 1.0f, SpriteEffects.None, 1.0f, mTextureAlpha);
         }
 
+        public void SetAllied()
+        {
+            mAllied = true;
+            mTextureAlpha = 0.5f;
+        }
+
     }
 }

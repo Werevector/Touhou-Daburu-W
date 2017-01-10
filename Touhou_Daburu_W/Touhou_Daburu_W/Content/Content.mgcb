@@ -169,3 +169,9 @@
 /processorParam:TextureFormat=Color
 /build:Images/Player/pl03.png
 
+#begin infoFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:infoFont.spritefont
+
