@@ -4,13 +4,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Touhou_Daburu_W
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class BulletGame : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        PlayerManager mPlayerManager;
+        EnemyManager mEnemyManager;
+        BulletManager mBulletManager;
+        StageManager mStageManager;
 
         public BulletGame()
         {
@@ -18,65 +20,62 @@ namespace Touhou_Daburu_W
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            //graphics.PreferredBackBufferWidth = 1600;
+            //graphics.PreferredBackBufferHeight = 1200;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
+            //graphics.IsFullScreen = true;
+            graphics.ApplyChanges();
 
+            mPlayerManager = new PlayerManager();
+            mEnemyManager = new EnemyManager();
+            mBulletManager = new BulletManager();
+            mStageManager = new StageManager();
+            mStageManager.Init(mEnemyManager, mBulletManager);
+            mPlayerManager.SetBulletManager(mBulletManager);
             base.Initialize();
+            GraphicsDevice.Clear(Color.Black);
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            mPlayerManager.LoadContent(this.Content);
+            mEnemyManager.LoadContent(this.Content);
+            mBulletManager.LoadContent(this.Content);
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            mStageManager.Update(gameTime);
+            mPlayerManager.Update(gameTime);
+            mEnemyManager.Update(gameTime);
+            mBulletManager.Update(gameTime);
 
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black*0.5f);
 
-            // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            mBulletManager.Draw(spriteBatch);
+            mEnemyManager.Draw(spriteBatch);
+            mPlayerManager.Draw(spriteBatch);
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

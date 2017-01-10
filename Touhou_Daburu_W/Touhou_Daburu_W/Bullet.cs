@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
 
-namespace Touhou_Daburu
+namespace Touhou_Daburu_W
 {
     class Bullet
     {
 
-        public TextureAtlas mBulletAtlas;
+        public SpriteAtlas mBulletAtlas;
         private Texture2D mErrorTexture;
 
         public string mBulletType;
@@ -50,7 +48,7 @@ namespace Touhou_Daburu
             mTextureAlpha = mAllied ? 0.5f : 1.0f;
         }
 
-        public void Init(TextureAtlas atlas, string type, int color)
+        public void Init(SpriteAtlas atlas, string type, int color)
         {
             mBulletAtlas = atlas;
             mBulletType = type;

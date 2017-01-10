@@ -1,146 +1,193 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 
-namespace Touhou_Daburu
+namespace Touhou_Daburu_W
 {
     class Enemy
     {
-        TextureAtlas mEnemyAtlas;
-        List<Pattern> mFirePatterns;
-
+        SpriteAtlas mEnemyAtlas;
         private string mSpriteName;
-
+        private Texture2D debugTexture;
+        private List<Pattern> mFirePatterns;
         public Rectangle mHitBox;
-
         public Vector2 mPosition;
         public Vector2 mVelocity;
         public Vector2 mAcceleration;
+        private PathManager mPathManager;
+        private SpriteAnimationManager mAnimationManager;
         public float mMoveSpeed;
+        private int mHealth;
 
-        public List<Vector2> mPathPoints;
-
-        public int mHealth;
-
-        private int pathIndex;
-
-        private int mCurrentTick;
-        private int mSequenceIndex;
-
-        public Dictionary<string, SpriteSequence> mSequenceMap;
-        public SpriteSequence mCurrentSequence;
-
-        private Texture2D debugTexture;
-
-        public Enemy()
+        enum MoveState
         {
+            IDLE,
+            LEFT,
+            RIGHT
+        }
+        private MoveState mMoveState;
+
+        public Enemy(SpriteAtlas atlas, string name)
+        {
+            mEnemyAtlas = atlas;
+            mSpriteName = name;
+            mHitBox = new Rectangle(0,0,50,50);
+
             mPosition = new Vector2(0, 0);
             mVelocity = new Vector2(0, 0);
             mAcceleration = new Vector2(0, 0);
-            mMoveSpeed = 0f;
+            mMoveSpeed = 3f;
 
             mFirePatterns = new List<Pattern>();
-            mHitBox = new Rectangle(0, 0, 2, 2);
 
-            mPathPoints = new List<Vector2>();
-
+            mPathManager = new PathManager();
             mHealth = 10;
-            pathIndex = 0;
-
-            mCurrentTick = 0;
-            mSequenceIndex = 0;
-
+            mMoveState = MoveState.IDLE;
         }
 
-        public Enemy(TextureAtlas atlas, Vector2 pos, Vector2 vel, Vector2 acc, Rectangle hitbox = new Rectangle())
+        public Enemy(string name)
         {
-            mEnemyAtlas = atlas;
-            mPosition = pos;
-            mVelocity = vel;
-            mAcceleration = acc;
-            mHitBox = hitbox;
-        }
+            mSpriteName = name;
+            mHitBox = new Rectangle(0, 0, 50, 50);
 
-        public void Update(GameTime gameTime)
-        {
-            UpdateAnimation();
+            mPosition = new Vector2(0, 0);
+            mVelocity = new Vector2(0, 0);
+            mAcceleration = new Vector2(0, 0);
+            mMoveSpeed = 3f;
 
-            mVelocity.X += mAcceleration.X;
-            mVelocity.Y += mAcceleration.Y;
+            mFirePatterns = new List<Pattern>();
 
-            mPosition.X += mVelocity.X;
-            mPosition.Y += mVelocity.Y;
-
-            mHitBox.X = (int)mPosition.X - mHitBox.Width / 2;
-            mHitBox.Y = (int)mPosition.Y - mHitBox.Height / 2;
-
-            if (mPathPoints.Count != 0 && pathIndex != mPathPoints.Count-1)
-            {
-                if ((mPosition - mPathPoints[pathIndex]).Length() < 5)
-                {
-                    pathIndex++;
-                }
-
-                double angle = Math.Atan2(mPathPoints[pathIndex].Y - mPosition.Y, mPathPoints[pathIndex].X - mPosition.X);
-                Vector2 pathVel = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                mVelocity = pathVel * mMoveSpeed;
-                
-            }
-
-            foreach (var pattern in mFirePatterns)
-            {
-                pattern.Update(gameTime, this);
-            }
-            
-        }
-
-        public void UpdateAnimation()
-        {
-            mCurrentTick++;
-            if (mCurrentTick == mCurrentSequence.mUpdateDelay)
-            {
-                mCurrentTick = 0;
-                mSequenceIndex++;
-
-                if (mSequenceIndex == mCurrentSequence.mSequence.Count)
-                {
-                    if (mCurrentSequence.Looping)
-                        mSequenceIndex = mCurrentSequence.mSubLoop;
-                    else
-                        mSequenceIndex = mCurrentSequence.mSequence.Count - 1;
-                }
-            }
+            mPathManager = new PathManager();
+            mHealth = 10;
+            mMoveState = MoveState.IDLE;
         }
 
         public void Draw(SpriteBatch sb)
         {
-            Rectangle r = new Rectangle(0, 0, 5, 5);
-            for (int i = 0; i < mPathPoints.Count - 2; i++)
-            {
-                Utility.DrawLine(sb, debugTexture, mPathPoints[i], mPathPoints[i + 1], Color.Gold);
-                //Utility.DrawRectangle(sb, debugTexture, mPathPoints[i], r, Color.Yellow);
-            }
-            mEnemyAtlas.Draw(sb, mSpriteName, mCurrentSequence.GetKeyAt(mSequenceIndex), mPosition);
+            SpriteEffects effect = mMoveState == MoveState.RIGHT ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            mEnemyAtlas.Draw(sb, mSpriteName, mAnimationManager.GetCurrentSequenceKey(), mPosition, effect);
         }
 
-        public Vector2 GetPosition() { return mPosition; }
-        public Rectangle GetHitbox() { return mHitBox; }
-        public void SetTextureAtlas(TextureAtlas atlas) { mEnemyAtlas = atlas; debugTexture = mEnemyAtlas.GenerateDebugTexture(Color.White); }
-        public void AddPattern(Pattern p) { mFirePatterns.Add(p); }
-        public void SetSpriteName(string type) { mSpriteName = type; }
-
-
-        public void SetSequenceMap(Dictionary<string, SpriteSequence> map)
+        public void Update(GameTime gameTime)
         {
-            mSequenceMap = map;
-            mCurrentSequence = mSequenceMap["Idle"];
+            mPathManager.Update(mPosition);
+            UpdateMovement(gameTime);
+            CheckMoveState();
+            UpdateAnimation(gameTime);
+            UpdateFirePatterns(gameTime);
+        }
+
+        public void TakeDamage(int amount)
+        {
+            mHealth -= amount;
+        }
+
+        private void UpdateAnimation(GameTime gameTime)
+        {
+            switch (mMoveState)
+            {
+                case MoveState.IDLE:
+                    mAnimationManager.ChangeSequence("Idle");
+                    break;
+                case MoveState.LEFT:
+                    mAnimationManager.ChangeSequence("SideMove");
+                    break;
+                case MoveState.RIGHT:
+                    mAnimationManager.ChangeSequence("SideMove");
+                    break;
+                default:
+                    break;
+            }
+            mAnimationManager.Update(gameTime);
+        }
+
+        private void CheckMoveState()
+        {
+            if (mVelocity.X < 0)
+            {
+                mMoveState = MoveState.LEFT;
+            }
+            if (mVelocity.X > 0)
+            {
+                mMoveState = MoveState.RIGHT;
+            }
+        }
+
+        private void UpdateMovement(GameTime gameTime)
+        {
+            double delta = gameTime.ElapsedGameTime.TotalSeconds;
+            mVelocity.X = 0; mVelocity.Y = 0;
+            mVelocity = mPathManager.GetUnitVector();
+            mVelocity *= mMoveSpeed;
+            
+            //mVelocity.X += mAcceleration.X;
+            //mVelocity.Y += mAcceleration.Y;
+
+            mPosition.X += mVelocity.X * (float)delta;
+            mPosition.Y += mVelocity.Y * (float)delta;
+
+            mHitBox.X = (int)mPosition.X - mHitBox.Width / 2;
+            mHitBox.Y = (int)mPosition.Y - mHitBox.Height / 2;
+        }
+
+        private void UpdateFirePatterns(GameTime gameTime)
+        {
+            foreach (var pattern in mFirePatterns)
+            {
+                pattern.Update(gameTime, this);
+            }
+        }
+
+        public string GetSpriteName()
+        {
+            return mSpriteName;
+        }
+        public Vector2 GetPosition()
+        {
+            return mPosition;
+        }
+        public Rectangle GetHitbox()
+        {
+            return mHitBox;
+        }
+        public int GetHealth()
+        {
+            return mHealth;
+        }
+        public void SetAtlas(SpriteAtlas atlas)
+        {
+            mEnemyAtlas = atlas;
+        }
+        public void SetAnimationSequences( Dictionary<string, SpriteSequenceData> sequences)
+        {
+            mAnimationManager = new SpriteAnimationManager(sequences);
+        }
+        public void SetPosition(Vector2 position)
+        {
+            mPosition = position;
+        }
+        public void SetVelocity(Vector2 velocity)
+        {
+            mVelocity = velocity;
+        }
+        public void SetAcceleration(Vector2 acceleration)
+        {
+            mAcceleration = acceleration;
+        }
+        public void SetPatterns(List<Pattern> patterns)
+        {
+            mFirePatterns = patterns;
+        }
+        public void AddPattern(Pattern p)
+        {
+            mFirePatterns.Add(p);
+        }
+        public void SetPath(List<Vector2> points)
+        {
+            mPathManager.SetPathPoints(points);
         }
     }
 }

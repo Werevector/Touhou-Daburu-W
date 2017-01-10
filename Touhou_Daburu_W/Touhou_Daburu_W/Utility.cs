@@ -7,11 +7,23 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Touhou_Daburu
+namespace Touhou_Daburu_W
 {
 
     class Utility
     {
+
+        public static bool IsWithinScreenBounds(int pad, Rectangle rect)
+        {
+            Rectangle bound = new Rectangle(-pad, -pad, 1920 + pad * 2, 1080 + pad * 2);
+            return bound.Intersects(rect);
+        }
+
+        public static bool IsOutsideRect(Rectangle rectangle, Vector2 p)
+        {
+            return p.X > rectangle.X + rectangle.Width || p.Y > rectangle.Y + rectangle.Height || p.X < rectangle.X || p.Y < rectangle.Y;
+        }
+
         public static List<Vector2> CreateSplinePoints(List<Vector2> points, int resolution)
         {
             List<Vector2> splinePoints = new List<Vector2>();

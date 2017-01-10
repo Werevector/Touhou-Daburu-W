@@ -8,14 +8,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Touhou_Daburu
+namespace Touhou_Daburu_W
 {
-    class TextureAtlas
+    class SpriteAtlas
     {
         private Texture2D mAtlas;
-        private Dictionary<String, List<Rectangle>> mClipMap;
+        private Dictionary<string, List<Rectangle>> mClipMap;
+        private Dictionary<string, int> mClipOriginAngles;
 
-        public TextureAtlas(Texture2D texture, Dictionary<String, List<Rectangle>> clips)
+        public SpriteAtlas()
+        {
+
+        }
+
+        public SpriteAtlas(Texture2D texture, Dictionary<String, List<Rectangle>> clips)
         {
             mAtlas = texture;
             mClipMap = clips;
@@ -28,10 +34,19 @@ namespace Touhou_Daburu
             sb.Draw(mAtlas, destination, source, Color.White);
         }
 
+        public void Draw(SpriteBatch sb, String clipSet, int index, Vector2 position , SpriteEffects effect)
+        {
+            Rectangle source = mClipMap[clipSet][index];
+            Rectangle destination = new Rectangle((int)position.X - source.Width / 2, (int)position.Y - source.Height / 2, source.Width, source.Height);
+            sb.Draw(mAtlas, destination, source, Color.White, 0.0f, new Vector2(), effect, 0.0f);
+        }
+
+
         public void Draw(SpriteBatch sb, string clipSet, int index, Vector2 position, float angle, float scale, SpriteEffects effect, float depth, float alpha)
         {
             Rectangle source = mClipMap[clipSet][index];
             Vector2 origin = new Vector2(source.Width / 2, source.Height / 2);
+            angle += (float)(mClipOriginAngles[clipSet] * Math.PI / 180);
             sb.Draw(mAtlas, position, source, Color.White * alpha, angle, origin, scale, effect, depth);
         }
 
@@ -70,6 +85,16 @@ namespace Touhou_Daburu
             t.SetData<Color>(
                 new Color[] { c });
             return t;
+        }
+
+        public void SetImage(Texture2D image)
+        {
+            mAtlas = image;
+        }
+        public void SetClipMap(Dictionary<string, List<Rectangle>> map, Dictionary<string, int> origins)
+        {
+            mClipMap = map;
+            mClipOriginAngles = origins;
         }
     }
 }
