@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Lidgren.Network;
 
 namespace Touhou_Daburu_W
 {
@@ -21,7 +22,7 @@ namespace Touhou_Daburu_W
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-
+        
         protected override void Initialize()
         {
             //graphics.PreferredBackBufferWidth = 1600;
