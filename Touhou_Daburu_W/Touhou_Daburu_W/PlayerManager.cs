@@ -23,37 +23,64 @@ namespace Touhou_Daburu_W
 
         BulletManager mBulletManager;
 
+        bool mIsSlaveManager;
+
         public PlayerManager()
         {
+            mIsSlaveManager = false;
             mNameToAtlas = new Dictionary<string, SpriteAtlas>();
             mNameToSequenceset = new Dictionary<string, Dictionary<string, SpriteSequenceData>>();
+        }
+
+        public void InitAsMaster()
+        {
             mPlayerOne = new Player();
             mPlayerTwo = new Player();
+            mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
+            mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
+
             mPlayerOne.SetPosition(400, 200);
             mPlayerTwo.SetPosition(200, 200);
-            //mPlayerTwo.SetComputerControlled(true);
+            mPlayerTwo.SetComputerControlled(true);
+        }
+
+        public void InitAsSlave()
+        {
+            mIsSlaveManager = true;
+            mPlayerOne = new Player();
+            mPlayerTwo = new Player();
+            mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
+            mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
+            mPlayerOne.SetPosition(400, 200);
+            mPlayerTwo.SetPosition(200, 200);
+            mPlayerOne.SetComputerControlled(true);
         }
 
         public void Update(GameTime gameTime)
         {
-            mPlayerOne.Update(gameTime);
-            mPlayerTwo.Update(gameTime);
+            if (mPlayerOne != null)
+                mPlayerOne.Update(gameTime); 
+            if(mPlayerTwo != null)
+                mPlayerTwo.Update(gameTime);
+
             CheckPlayerCollisions();
         }
         
         public void CheckPlayerCollisions()
         {
-            if (!mPlayerOne.mDamaged && !mPlayerOne.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerOne.GetHitBox()))
+            if (mPlayerOne != null && !mPlayerOne.mDamaged && !mPlayerOne.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerOne.GetHitBox()))
                 mPlayerOne.TakeDamage();
 
-            //if (!mPlayerTwo.mDamaged && !mPlayerTwo.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerTwo.GetHitBox()))
-            //    mPlayerTwo.TakeDamage();
+            if (mPlayerTwo != null && !mPlayerTwo.mDamaged && !mPlayerTwo.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerTwo.GetHitBox()))
+                mPlayerTwo.TakeDamage();
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            mPlayerOne.Draw(spriteBatch);
-            mPlayerTwo.Draw(spriteBatch);
+            if(mPlayerOne != null)
+                mPlayerOne.Draw(spriteBatch);
+            if(mPlayerTwo != null)
+                mPlayerTwo.Draw(spriteBatch);
         }
 
         public void LoadContent(ContentManager content)
@@ -93,17 +120,37 @@ namespace Touhou_Daburu_W
                 }
                 mNameToSequenceset.Add(aInfo.Image, sequenceMap);
             }
-            mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
-            mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
+            //mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
+            //mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
 
         }
 
         public void SetBulletManager(BulletManager manager)
         {
             mBulletManager = manager;
+
             mPlayerOne.mBulletManager = manager;
+
             mPlayerTwo.mBulletManager = manager;
         }
 
+        public void SetAsSlave() { mIsSlaveManager = true; }
+
+        public void SetPlayerOnePosition(Vector2 newpos) { mPlayerOne.SetPosition(newpos); }
+        public void SetPlayerTwoPosition(Vector2 newpos) { mPlayerTwo.SetPosition(newpos); }
+        public Vector2 GetPlayerOnePosition()
+        {
+            if (mPlayerOne != null)
+                return mPlayerOne.mPosition;
+            else
+                return new Vector2(0, 0);
+        }
+        public Vector2 GetPlayerTwoPosition()
+        {
+            if (mPlayerTwo != null)
+                return mPlayerTwo.mPosition;
+            else
+                return new Vector2(0, 0);
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace Touhou_Daburu_W
     class InfoPrinter
     {
         SpriteFont font;
+        public NetworkManager mNetworkManager;
 
         private double mFrameTime;
         private bool mIsRunningSlow;
@@ -22,8 +23,7 @@ namespace Touhou_Daburu_W
 
         public void LoadContent(ContentManager content)
         {
-            font = content.Load<SpriteFont>("infoFont");
-            
+            font = content.Load<SpriteFont>("infoFont");   
         }
 
         public void Update(GameTime gameTime)
@@ -37,6 +37,25 @@ namespace Touhou_Daburu_W
             mFrameTime = gameTime.ElapsedGameTime.TotalMilliseconds;
             spriteBatch.DrawString(font, "FrameTime: " + mFrameTime, new Vector2(2, 0), Color.Red);
             spriteBatch.DrawString(font, "Slow: " + mIsRunningSlow, new Vector2(2, 15), Color.Red);
+            spriteBatch.DrawString(font, "Create Server: I", new Vector2(650, 0), Color.White);
+            spriteBatch.DrawString(font, "Create Client: O", new Vector2(650, 15), Color.White);
+            spriteBatch.DrawString(font, "Connect To Server: P", new Vector2(630, 30), Color.White);
+            if (mNetworkManager != null)
+            {
+                if (mNetworkManager.IsServer())
+                {
+                    spriteBatch.DrawString(font, "Client Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
+                    
+                }
+                else
+                {
+                    spriteBatch.DrawString(font, "Server Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
+                }
+                
+
+
+            }
         }
+         
     }
 }

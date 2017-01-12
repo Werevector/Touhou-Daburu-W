@@ -102,7 +102,7 @@ namespace Touhou_Daburu_W
             mVelocity.X = 0; mVelocity.Y = 0;
             if (!mComputer)
             {
-                ResetControlFLags();
+                ResetControlFlags();
                 CheckControls();
             }
             UpdateMovement(gameTime);
@@ -134,7 +134,8 @@ namespace Touhou_Daburu_W
             for (int i = 0; i < 2; i++)
             {
                 Vector2 pos = new Vector2(mPosition.X - gap + (gap*2*i), mPosition.Y);
-                mBulletManager.SpawnPlayerBullet(mAtlas, "Shot", pos, vel, acc, hitBox, true);
+                if(mBulletManager != null)
+                    mBulletManager.SpawnPlayerBullet(mAtlas, "Shot", pos, vel, acc, hitBox, true);
             }
         }
 
@@ -156,7 +157,7 @@ namespace Touhou_Daburu_W
             mInvulnTimer = 0.0;
         }
 
-        private void ResetControlFLags()
+        private void ResetControlFlags()
         {
             mShooting = false;
             mFocusing = false;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Lidgren.Network;
 
 namespace Touhou_Daburu_W
 {
@@ -14,6 +13,7 @@ namespace Touhou_Daburu_W
         EnemyManager mEnemyManager;
         BulletManager mBulletManager;
         StageManager mStageManager;
+        NetworkManager mNetworkManager;
 
         InfoPrinter mInfoPrinter;
 
@@ -37,7 +37,6 @@ namespace Touhou_Daburu_W
             mBulletManager = new BulletManager();
             mStageManager = new StageManager();
             mStageManager.Init(mEnemyManager, mBulletManager);
-            mPlayerManager.SetBulletManager(mBulletManager);
             mEnemyManager.SetBulletManager(mBulletManager);
 
             mInfoPrinter = new InfoPrinter();
@@ -60,13 +59,24 @@ namespace Touhou_Daburu_W
         }
 
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        const int port = 8090;
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            //mInfoPrinter.Update(gameTime);
-            
+            KeyboardState keyboard = Keyboard.GetState();
+            if (keyboard.IsKeyDown(Keys.I))
+                CreateNetServer(port);
+            if (keyboard.IsKeyDown(Keys.O))
+                CreateNetClient();
+            if (keyboard.IsKeyDown(Keys.P))
+                ConnectToServer("25.102.234.66", port);
+
+            if (mNetworkManager != null)
+            {
+                mNetworkManager.Update();
+            }
             mStageManager.Update(gameTime);
             mPlayerManager.Update(gameTime);
             mEnemyManager.Update(gameTime);
@@ -87,6 +97,38 @@ namespace Touhou_Daburu_W
             mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void CreateNetServer(int port)
+        {
+            if (mNetworkManager == null)
+            {
+                mNetworkManager = new NetworkManager();
+                mNetworkManager.InitAsServer(port); 
+                mInfoPrinter.mNetworkManager = mNetworkManager;
+                mPlayerManager.InitAsMaster();
+                mPlayerManager.SetBulletManager(mBulletManager);
+                mNetworkManager.SetPlayerManager(mPlayerManager);
+            }
+        }
+
+        private void CreateNetClient()
+        {
+            if (mNetworkManager == null)
+            {
+                mNetworkManager = new NetworkManager();
+                mNetworkManager.InitAsClient();
+                mInfoPrinter.mNetworkManager = mNetworkManager;
+                mPlayerManager.InitAsSlave();
+                mPlayerManager.SetBulletManager(mBulletManager);
+                mNetworkManager.SetPlayerManager(mPlayerManager);
+            }
+        }
+
+        private void ConnectToServer(string ip, int port)
+        {
+            if (mNetworkManager != null)
+                mNetworkManager.Connect(ip, port);
         }
     }
 }

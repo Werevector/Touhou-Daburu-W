@@ -46,6 +46,7 @@
     <Compile Include="EnemyManager.cs" />
     <Compile Include="InfoPrinter.cs" />
     <Compile Include="InfoStructures.cs" />
+    <Compile Include="NetworkManager.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="Player.cs" />
