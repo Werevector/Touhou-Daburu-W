@@ -80,9 +80,9 @@ namespace Touhou_Daburu_W
                 message = mHost.CreateMessage();
             else
                 message = mClient.CreateMessage();
-            message.Write((int)mPlayerManager.GetPlayerOnePosition().X);
-            message.Write((int)mPlayerManager.GetPlayerOnePosition().Y);
-            message.Write(mPlayerManager.GetPlayerOne().IsFiring());
+            message.Write((int)player.mPosition.X);
+            message.Write((int)player.mPosition.Y);
+            message.Write(player.mShooting);
             return message;
         }
 
@@ -97,7 +97,7 @@ namespace Touhou_Daburu_W
             }
         }
 
-        private Player GetPlayer()
+        private Player GetHostPlayer()
         {
             Player player;
             if (mIsHost)
@@ -107,16 +107,32 @@ namespace Touhou_Daburu_W
             return player;
         }
 
+        private Player GetConnectedPlayer()
+        {
+            Player player;
+            if (mIsHost)
+                player = mPlayerManager.GetPlayerTwo();
+            else
+                player = mPlayerManager.GetPlayerOne();
+            return player;
+        }
+
         private void ProccessMessages()
         {
             NetIncomingMessage message;
-            while ((message = mClient.ReadMessage()) != null)
+            NetPeer peer;
+            if (mIsHost)
+                peer = mHost;
+            else
+                peer = mClient;
+
+            while ((message = peer.ReadMessage()) != null)
             {
                 switch (message.MessageType)
                 {
                     case NetIncomingMessageType.Data:
                         // handle custom messages
-                        SendDataToPlayerObject(GetPlayer(), message);
+                        SendDataToPlayerObject(GetConnectedPlayer(), message);
                         break;
 
                     case NetIncomingMessageType.StatusChanged:
