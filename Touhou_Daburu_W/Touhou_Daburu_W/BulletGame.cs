@@ -38,6 +38,7 @@ namespace Touhou_Daburu_W
             mStageManager = new StageManager();
             mStageManager.Init(mEnemyManager, mBulletManager);
             mEnemyManager.SetBulletManager(mBulletManager);
+            mPlayerManager.SetBulletManager(mBulletManager);
 
             mInfoPrinter = new InfoPrinter();
 
@@ -108,7 +109,6 @@ namespace Touhou_Daburu_W
                 mNetworkManager.InitAsServer(port); 
                 mInfoPrinter.mNetworkManager = mNetworkManager;
                 mPlayerManager.InitAsMaster();
-                mPlayerManager.SetBulletManager(mBulletManager);
                 mNetworkManager.SetPlayerManager(mPlayerManager);
             }
         }
@@ -121,7 +121,6 @@ namespace Touhou_Daburu_W
                 mNetworkManager.InitAsClient();
                 mInfoPrinter.mNetworkManager = mNetworkManager;
                 mPlayerManager.InitAsSlave();
-                mPlayerManager.SetBulletManager(mBulletManager);
                 mNetworkManager.SetPlayerManager(mPlayerManager);
             }
         }

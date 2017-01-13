@@ -44,12 +44,12 @@ namespace Touhou_Daburu_W
             {
                 if (mNetworkManager.IsHost())
                 {
-                    spriteBatch.DrawString(font, "Client Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
+                    spriteBatch.DrawString(font, "Player Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
                     
                 }
                 else
                 {
-                    spriteBatch.DrawString(font, "Server Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
+                    spriteBatch.DrawString(font, "Host Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
                 }
                 
 

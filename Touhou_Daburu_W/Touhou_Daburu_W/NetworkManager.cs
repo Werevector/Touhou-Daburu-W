@@ -9,7 +9,7 @@ namespace Touhou_Daburu_W
 {
     class NetworkManager
     {
-        enum NetMessageType
+        enum NetGameMessageType
         {
             PLAYERDATA,
             EVENT
@@ -80,6 +80,7 @@ namespace Touhou_Daburu_W
                 message = mHost.CreateMessage();
             else
                 message = mClient.CreateMessage();
+            message.Write((int)NetGameMessageType.PLAYERDATA);
             message.Write((int)player.mPosition.X);
             message.Write((int)player.mPosition.Y);
             message.Write(player.mShooting);
@@ -131,16 +132,25 @@ namespace Touhou_Daburu_W
                 switch (message.MessageType)
                 {
                     case NetIncomingMessageType.Data:
-                        // handle custom messages
-                        SendDataToPlayerObject(GetConnectedPlayer(), message);
+                        switch ((NetGameMessageType)message.ReadInt32())
+                        {
+                            case NetGameMessageType.EVENT:
+                                break;
+                            case NetGameMessageType.PLAYERDATA:
+                                SendDataToPlayerObject(GetConnectedPlayer(), message);
+                                break;
+                            default:
+                                break;
+                        }
+                        
                         break;
 
                     case NetIncomingMessageType.StatusChanged:
-                        // handle connection status messages
                         switch (message.SenderConnection.Status)
                         {
                             case NetConnectionStatus.Connected:
                                 mIsConnected = true;
+                                mPlayerManager.InitConnectedPlayer();
                                 break;
                             case NetConnectionStatus.Disconnected:
                                 mIsConnected = false;
@@ -149,8 +159,6 @@ namespace Touhou_Daburu_W
                         break;
 
                     case NetIncomingMessageType.DebugMessage:
-                        // handle debug messages
-                        // (only received when compiled in DEBUG mode)
                         Console.WriteLine(message.ReadString());
                         break;
 

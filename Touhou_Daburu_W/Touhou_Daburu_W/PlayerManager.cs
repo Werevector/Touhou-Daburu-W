@@ -35,25 +35,48 @@ namespace Touhou_Daburu_W
         public void InitAsMaster()
         {
             mPlayerOne = new Player();
-            mPlayerTwo = new Player();
+            //mPlayerTwo = new Player();
             mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
-            mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
+            //mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
+            mPlayerOne.mBulletManager = mBulletManager;
+            //mPlayerTwo.mBulletManager = mBulletManager;
 
             mPlayerOne.SetPosition(400, 200);
-            mPlayerTwo.SetPosition(200, 200);
-            mPlayerTwo.SetComputerControlled(true);
+            //mPlayerTwo.SetPosition(200, 200);
+            //mPlayerTwo.SetComputerControlled(true);
         }
 
         public void InitAsSlave()
         {
             mIsSlaveManager = true;
-            mPlayerOne = new Player();
+            //mPlayerOne = new Player();
             mPlayerTwo = new Player();
-            mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
+            //mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
             mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
-            mPlayerOne.SetPosition(400, 200);
+            //mPlayerOne.mBulletManager = mBulletManager;
+            mPlayerTwo.mBulletManager = mBulletManager;
+
+            //mPlayerOne.SetPosition(400, 200);
             mPlayerTwo.SetPosition(200, 200);
-            mPlayerOne.SetComputerControlled(true);
+            //mPlayerOne.SetComputerControlled(true);
+        }
+
+        public void InitConnectedPlayer()
+        {
+            if (mIsSlaveManager)
+            {
+                mPlayerOne = new Player();
+                mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
+                mPlayerOne.mBulletManager = mBulletManager;
+                mPlayerOne.SetPosition(400, 200);
+            }
+            else
+            {
+                mPlayerTwo = new Player();
+                mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
+                mPlayerTwo.mBulletManager = mBulletManager;
+                mPlayerTwo.SetPosition(200, 200);
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -128,10 +151,6 @@ namespace Touhou_Daburu_W
         public void SetBulletManager(BulletManager manager)
         {
             mBulletManager = manager;
-
-            mPlayerOne.mBulletManager = manager;
-
-            mPlayerTwo.mBulletManager = manager;
         }
 
         public void SetAsSlave() { mIsSlaveManager = true; }
