@@ -121,8 +121,9 @@ namespace Touhou_Daburu_W
                 mVelocity.Y -= 1;
             if (keyboard.IsKeyDown(Keys.Down))
                 mVelocity.Y += 1;
-            if (keyboard.IsKeyDown(Keys.Z))
-                mShooting = true;
+            //if (keyboard.IsKeyDown(Keys.Z))
+            //    mShooting = true;
+            mShooting = keyboard.IsKeyDown(Keys.Z);
         }
 
         private void Fire()
@@ -159,7 +160,7 @@ namespace Touhou_Daburu_W
 
         private void ResetControlFlags()
         {
-            mShooting = false;
+            //mShooting = false;
             mFocusing = false;
             mLeft = false;
             mRight = false;
@@ -250,6 +251,11 @@ namespace Touhou_Daburu_W
         {
             mComputer = controlled;
         }
+        public bool IsFiring()
+        {
+            return mShooting;
+        }
+        public void SetFiring(bool state) { mShooting = state; }
         public Rectangle GetHitBox()
         {
             return mHitBox;

@@ -152,5 +152,13 @@ namespace Touhou_Daburu_W
             else
                 return new Vector2(0, 0);
         }
+        public Player GetPlayerOne()
+        {
+            return mPlayerOne;
+        }
+        public Player GetPlayerTwo()
+        {
+            return mPlayerTwo;
+        }
     }
 }

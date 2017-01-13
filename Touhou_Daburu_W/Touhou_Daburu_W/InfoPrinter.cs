@@ -42,7 +42,7 @@ namespace Touhou_Daburu_W
             spriteBatch.DrawString(font, "Connect To Server: P", new Vector2(630, 30), Color.White);
             if (mNetworkManager != null)
             {
-                if (mNetworkManager.IsServer())
+                if (mNetworkManager.IsHost())
                 {
                     spriteBatch.DrawString(font, "Client Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
                     

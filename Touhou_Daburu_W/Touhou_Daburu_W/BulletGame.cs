@@ -73,14 +73,15 @@ namespace Touhou_Daburu_W
             if (keyboard.IsKeyDown(Keys.P))
                 ConnectToServer("25.102.234.66", port);
 
-            if (mNetworkManager != null)
-            {
-                mNetworkManager.Update();
-            }
+            
             mStageManager.Update(gameTime);
             mPlayerManager.Update(gameTime);
             mEnemyManager.Update(gameTime);
             mBulletManager.Update(gameTime);
+            if (mNetworkManager != null)
+            {
+                mNetworkManager.Update();
+            }
 
             base.Update(gameTime);
         }
