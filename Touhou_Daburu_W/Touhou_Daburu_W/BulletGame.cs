@@ -72,7 +72,7 @@ namespace Touhou_Daburu_W
             if (keyboard.IsKeyDown(Keys.O))
                 CreateNetClient();
             if (keyboard.IsKeyDown(Keys.P))
-                ConnectToServer("25.102.234.66", port);
+                ConnectToServer("localhost", port);
 
             
             mStageManager.Update(gameTime);

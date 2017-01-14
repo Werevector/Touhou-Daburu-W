@@ -69,6 +69,7 @@ namespace Touhou_Daburu_W
                 mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
                 mPlayerOne.mBulletManager = mBulletManager;
                 mPlayerOne.SetPosition(400, 200);
+                mPlayerOne.SetComputerControlled(true);
             }
             else
             {
@@ -76,6 +77,7 @@ namespace Touhou_Daburu_W
                 mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
                 mPlayerTwo.mBulletManager = mBulletManager;
                 mPlayerTwo.SetPosition(200, 200);
+                mPlayerTwo.SetComputerControlled(true);
             }
         }
 
