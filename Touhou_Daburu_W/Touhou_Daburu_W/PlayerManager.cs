@@ -35,30 +35,19 @@ namespace Touhou_Daburu_W
         public void InitAsMaster()
         {
             mPlayerOne = new Player();
-            //mPlayerTwo = new Player();
             mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
-            //mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
             mPlayerOne.mBulletManager = mBulletManager;
-            //mPlayerTwo.mBulletManager = mBulletManager;
-
             mPlayerOne.SetPosition(400, 200);
-            //mPlayerTwo.SetPosition(200, 200);
-            //mPlayerTwo.SetComputerControlled(true);
+
         }
 
         public void InitAsSlave()
         {
             mIsSlaveManager = true;
-            //mPlayerOne = new Player();
             mPlayerTwo = new Player();
-            //mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
             mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
-            //mPlayerOne.mBulletManager = mBulletManager;
             mPlayerTwo.mBulletManager = mBulletManager;
-
-            //mPlayerOne.SetPosition(400, 200);
             mPlayerTwo.SetPosition(200, 200);
-            //mPlayerOne.SetComputerControlled(true);
         }
 
         public void InitConnectedPlayer()
@@ -69,7 +58,7 @@ namespace Touhou_Daburu_W
                 mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
                 mPlayerOne.mBulletManager = mBulletManager;
                 mPlayerOne.SetPosition(400, 200);
-                mPlayerOne.SetComputerControlled(true);
+                mPlayerOne.MakeGhostObject();
             }
             else
             {
@@ -77,7 +66,7 @@ namespace Touhou_Daburu_W
                 mPlayerTwo.Init(mNameToAtlas["pl01"], "pl01", mNameToSequenceset["pl01"]);
                 mPlayerTwo.mBulletManager = mBulletManager;
                 mPlayerTwo.SetPosition(200, 200);
-                mPlayerTwo.SetComputerControlled(true);
+                mPlayerTwo.MakeGhostObject();
             }
         }
 
@@ -93,10 +82,10 @@ namespace Touhou_Daburu_W
         
         public void CheckPlayerCollisions()
         {
-            if (mPlayerOne != null && !mPlayerOne.mDamaged && !mPlayerOne.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerOne.GetHitBox()))
+            if (mPlayerOne != null && mBulletManager.CheckCollisionEnemy(mPlayerOne.GetHitBox()))
                 mPlayerOne.TakeDamage();
 
-            if (mPlayerTwo != null && !mPlayerTwo.mDamaged && !mPlayerTwo.mInvuln && mBulletManager.CheckCollisionEnemy(mPlayerTwo.GetHitBox()))
+            if (mPlayerTwo != null && mBulletManager.CheckCollisionEnemy(mPlayerTwo.GetHitBox()))
                 mPlayerTwo.TakeDamage();
         }
 
@@ -159,20 +148,6 @@ namespace Touhou_Daburu_W
 
         public void SetPlayerOnePosition(Vector2 newpos) { mPlayerOne.SetPosition(newpos); }
         public void SetPlayerTwoPosition(Vector2 newpos) { mPlayerTwo.SetPosition(newpos); }
-        public Vector2 GetPlayerOnePosition()
-        {
-            if (mPlayerOne != null)
-                return mPlayerOne.mPosition;
-            else
-                return new Vector2(0, 0);
-        }
-        public Vector2 GetPlayerTwoPosition()
-        {
-            if (mPlayerTwo != null)
-                return mPlayerTwo.mPosition;
-            else
-                return new Vector2(0, 0);
-        }
         public Player GetPlayerOne()
         {
             return mPlayerOne;

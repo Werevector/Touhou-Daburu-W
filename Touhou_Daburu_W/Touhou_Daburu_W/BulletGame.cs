@@ -91,12 +91,14 @@ namespace Touhou_Daburu_W
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+            mInfoPrinter.Update(gameTime);
 
             spriteBatch.Begin();
             mBulletManager.Draw(spriteBatch);
             mEnemyManager.Draw(spriteBatch);
             mPlayerManager.Draw(spriteBatch);
             mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
+            mInfoPrinter.DrawConnectionInfo(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }

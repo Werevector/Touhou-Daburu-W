@@ -30,7 +30,7 @@ namespace Touhou_Daburu_W
 
         public BulletManager mBulletManager;
 
-        public bool mShooting;
+        public bool mFiring;
         public bool mFocusing;
         public bool mBombing;
         public bool mDead;
@@ -38,7 +38,7 @@ namespace Touhou_Daburu_W
         public bool mInvuln;
         public bool mLeft;
         public bool mRight;
-        private bool mComputer;
+        private bool mIsGhostObject;
 
         public Player()
         {
@@ -51,11 +51,11 @@ namespace Touhou_Daburu_W
             mMovementSpeed = 200;
             mSpriteName = "pl00";
             mAtlas = null;
-            mShooting = false;
+            mFiring = false;
             mDead = false;
             mFocusing = false;
             mBombing = false;
-            mComputer = false;
+            mIsGhostObject = false;
             mRespawnTime = 2;
             mInvulnTime = 2;
         }
@@ -100,7 +100,7 @@ namespace Touhou_Daburu_W
                     
             }
             mVelocity.X = 0; mVelocity.Y = 0;
-            if (!mComputer)
+            if (!mIsGhostObject)
             {
                 ResetControlFlags();
                 CheckControls();
@@ -121,9 +121,8 @@ namespace Touhou_Daburu_W
                 mVelocity.Y -= 1;
             if (keyboard.IsKeyDown(Keys.Down))
                 mVelocity.Y += 1;
-            //if (keyboard.IsKeyDown(Keys.Z))
-            //    mShooting = true;
-            mShooting = keyboard.IsKeyDown(Keys.Z);
+
+            mFiring = keyboard.IsKeyDown(Keys.Z);
         }
 
         private void Fire()
@@ -147,6 +146,14 @@ namespace Touhou_Daburu_W
                 mDead = true;
             mDamaged = true;
             SetPosition(999, 999);
+        }
+
+        public void OnCollide()
+        {
+            if(!mDamaged && !mInvuln)
+            {
+
+            }
         }
 
         private void Respawn()
@@ -181,7 +188,7 @@ namespace Touhou_Daburu_W
                 mRight = false;
                 mLeft = false;
             }
-            if (mShooting)
+            if (mFiring)
             {
                 double t = 1 / (double)30;
                 if (mTick > t)
@@ -229,9 +236,7 @@ namespace Touhou_Daburu_W
             if (!mDamaged)
             {
                 mAtlas.Draw(spriteBatch, mSpriteName, mAnimationManager.GetCurrentSequenceKey(), mPosition, mInvuln ? 0.3f : 1.0f);
-            }
-
-                
+            }   
         }
 
         public void SetMoveSpeed(float speed)
@@ -247,15 +252,15 @@ namespace Touhou_Daburu_W
         {
             mPosition = pos;
         }
-        public void SetComputerControlled(bool controlled)
+        public void MakeGhostObject()
         {
-            mComputer = controlled;
+            mIsGhostObject = true;
         }
         public bool IsFiring()
         {
-            return mShooting;
+            return mFiring;
         }
-        public void SetFiring(bool state) { mShooting = state; }
+        public void SetFiringState(bool state) { mFiring = state; }
         public Rectangle GetHitBox()
         {
             return mHitBox;

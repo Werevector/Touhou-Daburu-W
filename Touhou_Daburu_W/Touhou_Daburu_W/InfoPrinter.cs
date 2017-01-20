@@ -13,12 +13,14 @@ namespace Touhou_Daburu_W
     {
         SpriteFont font;
         public NetworkManager mNetworkManager;
+        private FrameCounter frameCounter;
 
         private double mFrameTime;
         private bool mIsRunningSlow;
 
         public InfoPrinter()
         {
+            frameCounter = new FrameCounter();
         }
 
         public void LoadContent(ContentManager content)
@@ -30,30 +32,30 @@ namespace Touhou_Daburu_W
         {
             mFrameTime = gameTime.ElapsedGameTime.TotalMilliseconds;
             mIsRunningSlow = gameTime.IsRunningSlowly;
+            frameCounter.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
         }
 
         public void DrawFrameTiming(SpriteBatch spriteBatch, GameTime gameTime)
         {
             mFrameTime = gameTime.ElapsedGameTime.TotalMilliseconds;
-            spriteBatch.DrawString(font, "FrameTime: " + mFrameTime, new Vector2(2, 0), Color.Red);
-            spriteBatch.DrawString(font, "Slow: " + mIsRunningSlow, new Vector2(2, 15), Color.Red);
+            spriteBatch.DrawString(font, "FrameTime: " + mFrameTime, new Vector2(2, 0), Color.White);
+            spriteBatch.DrawString(font, "Slow: " + mIsRunningSlow, new Vector2(2, 17), mIsRunningSlow ? Color.Red : Color.White);
+            spriteBatch.DrawString(font, "FPS: " + frameCounter.AverageFramesPerSecond, new Vector2(2, 36), Color.Red);
+        }
+
+        public void DrawConnectionInfo(SpriteBatch spriteBatch)
+        {
             spriteBatch.DrawString(font, "Create Server: I", new Vector2(650, 0), Color.White);
             spriteBatch.DrawString(font, "Create Client: O", new Vector2(650, 15), Color.White);
             spriteBatch.DrawString(font, "Connect To Server: P", new Vector2(630, 30), Color.White);
+
             if (mNetworkManager != null)
             {
                 if (mNetworkManager.IsHost())
-                {
-                    spriteBatch.DrawString(font, "Player Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
-                    
-                }
+                    spriteBatch.DrawString(font, "Player Connected: " + mNetworkManager.IsConnected(), new Vector2(615, 50), Color.DarkGoldenrod);
                 else
-                {
-                    spriteBatch.DrawString(font, "Host Connected: " + mNetworkManager.IsConnected(), new Vector2(2, 30), Color.DarkGoldenrod);
-                }
-                
-
-
+                    spriteBatch.DrawString(font, "Host Connected: " + mNetworkManager.IsConnected(), new Vector2(615, 50), Color.DarkGoldenrod);
             }
         }
          

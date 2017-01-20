@@ -69,7 +69,7 @@ namespace Touhou_Daburu_W
         private void SendDataToPlayerObject(Player player, NetIncomingMessage message)
         {
             player.SetPosition(message.ReadInt32(), message.ReadInt32());
-            player.SetFiring(message.ReadBoolean());
+            player.SetFiringState(message.ReadBoolean());
 
         }
 
@@ -83,7 +83,7 @@ namespace Touhou_Daburu_W
             message.Write((int)NetGameMessageType.PLAYERDATA);
             message.Write((int)player.mPosition.X);
             message.Write((int)player.mPosition.Y);
-            message.Write(player.mShooting);
+            message.Write(player.mFiring);
             return message;
         }
 

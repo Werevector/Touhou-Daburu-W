@@ -44,6 +44,7 @@
     <Compile Include="Enemy.cs" />
     <Compile Include="EnemyGenerator.cs" />
     <Compile Include="EnemyManager.cs" />
+    <Compile Include="FrameCounter.cs" />
     <Compile Include="InfoPrinter.cs" />
     <Compile Include="InfoStructures.cs" />
     <Compile Include="NetworkManager.cs" />
