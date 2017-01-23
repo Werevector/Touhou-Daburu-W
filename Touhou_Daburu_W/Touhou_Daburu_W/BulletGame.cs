@@ -16,6 +16,15 @@ namespace Touhou_Daburu_W
         NetworkManager mNetworkManager;
 
         InfoPrinter mInfoPrinter;
+        GameState mGameState;
+
+        enum GameState
+        {
+            Playing,
+            Paused,
+            MainMenu,
+            ScoreScreen
+        }
 
         public BulletGame()
         {
@@ -25,13 +34,17 @@ namespace Touhou_Daburu_W
         
         protected override void Initialize()
         {
-            //graphics.PreferredBackBufferWidth = 1600;
-            //graphics.PreferredBackBufferHeight = 1200;
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
-            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
+            InitManagers();
+
+            base.Initialize();
+        }
+
+        private void InitManagers()
+        {
             mPlayerManager = new PlayerManager();
             mEnemyManager = new EnemyManager();
             mBulletManager = new BulletManager();
@@ -41,8 +54,6 @@ namespace Touhou_Daburu_W
             mPlayerManager.SetBulletManager(mBulletManager);
 
             mInfoPrinter = new InfoPrinter();
-
-            base.Initialize();
         }
 
         protected override void LoadContent()
