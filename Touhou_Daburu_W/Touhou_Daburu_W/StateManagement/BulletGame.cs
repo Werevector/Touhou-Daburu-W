@@ -14,6 +14,7 @@ namespace Touhou_Daburu_W
         BulletManager mBulletManager;
         StageManager mStageManager;
         NetworkManager mNetworkManager;
+        MenuManager mMenuManager;
 
         InfoPrinter mInfoPrinter;
         GameState mGameState;
@@ -49,11 +50,14 @@ namespace Touhou_Daburu_W
             mEnemyManager = new EnemyManager();
             mBulletManager = new BulletManager();
             mStageManager = new StageManager();
+            
             mStageManager.Init(mEnemyManager, mBulletManager);
             mEnemyManager.SetBulletManager(mBulletManager);
             mPlayerManager.SetBulletManager(mBulletManager);
 
             mInfoPrinter = new InfoPrinter();
+
+            mMenuManager = new MenuManager();
         }
 
         protected override void LoadContent()
@@ -63,6 +67,7 @@ namespace Touhou_Daburu_W
             mEnemyManager.LoadContent(this.Content);
             mBulletManager.LoadContent(this.Content);
             mInfoPrinter.LoadContent(this.Content);
+            mMenuManager.LoadContent(this.Content);
         }
 
         protected override void UnloadContent()
@@ -74,26 +79,28 @@ namespace Touhou_Daburu_W
         const int port = 8090;
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            //    Exit();
 
-            KeyboardState keyboard = Keyboard.GetState();
-            if (keyboard.IsKeyDown(Keys.I))
-                CreateNetServer(port);
-            if (keyboard.IsKeyDown(Keys.O))
-                CreateNetClient();
-            if (keyboard.IsKeyDown(Keys.P))
-                ConnectToServer("localhost", port);
+            //KeyboardState keyboard = Keyboard.GetState();
+            //if (keyboard.IsKeyDown(Keys.I))
+            //    CreateNetServer(port);
+            //if (keyboard.IsKeyDown(Keys.O))
+            //    CreateNetClient();
+            //if (keyboard.IsKeyDown(Keys.P))
+            //    ConnectToServer("localhost", port);
 
-            
-            mStageManager.Update(gameTime);
-            mPlayerManager.Update(gameTime);
-            mEnemyManager.Update(gameTime);
-            mBulletManager.Update(gameTime);
-            if (mNetworkManager != null)
-            {
-                mNetworkManager.Update();
-            }
+
+            //mStageManager.Update(gameTime);
+            //mPlayerManager.Update(gameTime);
+            //mEnemyManager.Update(gameTime);
+            //mBulletManager.Update(gameTime);
+            //if (mNetworkManager != null)
+            //{
+            //    mNetworkManager.Update();
+            //}
+
+            mMenuManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -102,14 +109,15 @@ namespace Touhou_Daburu_W
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            mInfoPrinter.Update(gameTime);
+            //mInfoPrinter.Update(gameTime);
 
             spriteBatch.Begin();
-            mBulletManager.Draw(spriteBatch);
-            mEnemyManager.Draw(spriteBatch);
-            mPlayerManager.Draw(spriteBatch);
-            mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
-            mInfoPrinter.DrawConnectionInfo(spriteBatch);
+            //mBulletManager.Draw(spriteBatch);
+            //mEnemyManager.Draw(spriteBatch);
+            //mPlayerManager.Draw(spriteBatch);
+            //mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
+            //mInfoPrinter.DrawConnectionInfo(spriteBatch);
+            mMenuManager.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
