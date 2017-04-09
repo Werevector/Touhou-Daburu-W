@@ -45,11 +45,16 @@
     <Compile Include="Enemy\EnemyGenerator.cs" />
     <Compile Include="Enemy\EnemyManager.cs" />
     <Compile Include="UI\ButtonItem.cs" />
+    <Compile Include="UI\ConnectGameMenu.cs" />
+    <Compile Include="UI\Events\ConnectRequestArgs.cs" />
+    <Compile Include="UI\Events\HostRequestedArgs.cs" />
+    <Compile Include="UI\HostGameMenu.cs" />
     <Compile Include="UI\IMenuItem.cs" />
     <Compile Include="UI\ItemList.cs" />
     <Compile Include="UI\ItemListSelectable.cs" />
     <Compile Include="UI\MenuItem.cs" />
     <Compile Include="UI\StartMenu.cs" />
+    <Compile Include="UI\TextInputItem.cs" />
     <Compile Include="Utility\FrameCounter.cs" />
     <Compile Include="Utility\InfoPrinter.cs" />
     <Compile Include="Utility\InfoStructures.cs" />

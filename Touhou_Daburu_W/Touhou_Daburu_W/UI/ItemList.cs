@@ -57,7 +57,6 @@ namespace Touhou_Daburu_W.UI
                 switch (mType)
                 {
                     case ItemListType.Horizontal:
-                        
                         item.SetPosition(previous.GetPosition().X + previous.GetItemSpan().X + itemPad.X, mPosition.Y + itemPad.Y);
                         break;
                     case ItemListType.Vertical:
@@ -73,6 +72,8 @@ namespace Touhou_Daburu_W.UI
             }
             mItems.Add(item);
             CheckDiags(ref mItemRectDiag, item.GetItemSpan());
+            if (mParent != null)
+                mParent.RedoItemSpan();
         }
 
         protected void CalculateListRectDiag()
@@ -103,6 +104,11 @@ namespace Touhou_Daburu_W.UI
                 default:
                     break;
             }
+        }
+
+        public override void RedoItemSpan()
+        {
+            CalculateListRectDiag();
         }
 
     }

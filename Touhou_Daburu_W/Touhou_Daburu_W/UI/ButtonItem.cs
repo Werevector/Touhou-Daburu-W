@@ -10,7 +10,7 @@ namespace Touhou_Daburu_W.UI
 {
     class ButtonItem : MenuItem
     {
-        private string mText;
+        private String mText;
         private IMenuItem mParent;
 
         public ButtonItem() : base()
@@ -22,6 +22,13 @@ namespace Touhou_Daburu_W.UI
         {
             mText = text;
             mItemRectDiag = font.MeasureString(text);
+        }
+
+        public ButtonItem(SpriteFont font, String text, ItemActivateDelegate del)
+        {
+            mText = text;
+            mItemRectDiag = font.MeasureString(text);
+            mItemFunction = del;
         }
 
         public override void Activate()
@@ -39,10 +46,15 @@ namespace Touhou_Daburu_W.UI
             sb.DrawString(font, mText, mPosition, color);
         }
 
-        public void SetText(SpriteFont font, ref string text)
+        public void SetText(SpriteFont font, string text)
         {
             mText = text;
             mItemRectDiag = font.MeasureString(text);
+        }
+
+        public override void RedoItemSpan()
+        {
+            return;
         }
     }
 }

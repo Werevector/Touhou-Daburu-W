@@ -175,3 +175,15 @@
 /processorParam:TextureFormat=Compressed
 /build:infoFont.spritefont
 
+#begin YuyukoFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:YuyukoFont.spritefont
+
+#begin ReimuFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:ReimuFont.spritefont
+

@@ -133,7 +133,7 @@ namespace Touhou_Daburu_W
                 bullet.Update(gameTime);
             }
 
-            CheckBulletBounds();
+            //CheckBulletBounds();
             ProccessDestroyQueues();
         }
 

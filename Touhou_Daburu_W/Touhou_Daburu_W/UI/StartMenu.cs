@@ -12,26 +12,39 @@ namespace Touhou_Daburu_W.UI
     class StartMenu
     {
         ItemListSelectable mMenuChoices;
-        public StartMenu(SpriteFont font)
+
+        public delegate void SwitchMenu();
+        public event SwitchMenu SwitchToConnect;
+        public event SwitchMenu SwitchToHost;
+
+        public StartMenu(SpriteFont font, MenuManager manager)
         {
             mMenuChoices = new ItemListSelectable(null, new Vector2(50, 50), ItemListType.Vertical,
                 new List<IMenuItem> {
-                    new ButtonItem(font, "Button 1"),
-                    new ButtonItem(font, "Button 2"),
-                    new ButtonItem(font, "Button 3"),
-                    new ButtonItem(font, "Button 4"),
-                    new ButtonItem(font, "Button 5")
+                    new ButtonItem(font, "Connect to Game", Connect),
+                    new ButtonItem(font, "Host Game", Host),
+                    new ButtonItem(font, "Options")
                 });
         }
 
-        public void HandleEvents()
+        public void HandleInput(object sender, TextInputEventArgs e)
         {
-            mMenuChoices.HandleEvents();
+            mMenuChoices.HandleInput(sender, e);
         }
 
         public void Draw(SpriteBatch sb, SpriteFont font, Color color)
         {
             mMenuChoices.Render(sb, font, color);
+        }
+
+        private void Connect()
+        {
+            SwitchToConnect?.Invoke();
+        }
+
+        private void Host()
+        {
+            SwitchToHost?.Invoke();
         }
 
     }

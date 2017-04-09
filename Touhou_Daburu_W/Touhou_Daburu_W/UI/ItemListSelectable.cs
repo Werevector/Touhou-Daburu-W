@@ -24,21 +24,23 @@ namespace Touhou_Daburu_W.UI
                 mSelected = index; 
         }
 
-        public void HandleEvents()
-        {
-            KeyboardState state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.Down))
-                SelectNewItem(mSelected + 1);
-            if (state.IsKeyDown(Keys.Up))
-                SelectNewItem(mSelected - 1);
-        }
-
         public override void Render(SpriteBatch sb, SpriteFont font, Color color)
         {
             for (int i = 0; i < mItems.Count; i++)
             {
-                mItems[i].Render(sb, font, (i == mSelected ? color : Color.Red) );
+                mItems[i].Render(sb, font, (i == mSelected ? Color.Red : color) );
             }
+        }
+
+        virtual public void HandleInput(object sender, TextInputEventArgs e)
+        {
+            char charEntered = e.Character;
+            if (charEntered == 'w')
+                SelectNewItem(mSelected - 1);
+            if (charEntered == 's')
+                SelectNewItem(mSelected + 1);
+            if (charEntered == '\r')
+                mItems[mSelected].Activate();
         }
     }
 }

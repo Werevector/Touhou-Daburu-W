@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using Touhou_Daburu_W.UI.Events;
+
 namespace Touhou_Daburu_W
 {
     public class BulletGame : Game
@@ -31,12 +33,16 @@ namespace Touhou_Daburu_W
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            mGameState = GameState.MainMenu;
         }
         
         protected override void Initialize()
         {
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
+            //graphics.PreferredBackBufferWidth = 3840;
+            //graphics.PreferredBackBufferHeight = 2160;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             InitManagers();
@@ -57,7 +63,9 @@ namespace Touhou_Daburu_W
 
             mInfoPrinter = new InfoPrinter();
 
-            mMenuManager = new MenuManager();
+            mMenuManager = new MenuManager(Window);
+            mMenuManager.RequestedHost += HandleHostRequest;
+            mMenuManager.RequestedConnect += HandleConnectRequest;
         }
 
         protected override void LoadContent()
@@ -79,8 +87,8 @@ namespace Touhou_Daburu_W
         const int port = 8090;
         protected override void Update(GameTime gameTime)
         {
-            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            //    Exit();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
 
             //KeyboardState keyboard = Keyboard.GetState();
             //if (keyboard.IsKeyDown(Keys.I))
@@ -91,14 +99,14 @@ namespace Touhou_Daburu_W
             //    ConnectToServer("localhost", port);
 
 
-            //mStageManager.Update(gameTime);
-            //mPlayerManager.Update(gameTime);
-            //mEnemyManager.Update(gameTime);
-            //mBulletManager.Update(gameTime);
-            //if (mNetworkManager != null)
-            //{
-            //    mNetworkManager.Update();
-            //}
+            mStageManager.Update(gameTime);
+            mPlayerManager.Update(gameTime);
+            mEnemyManager.Update(gameTime);
+            mBulletManager.Update(gameTime);
+            if (mNetworkManager != null)
+            {
+                mNetworkManager.Update();
+            }
 
             mMenuManager.Update(gameTime);
 
@@ -109,15 +117,31 @@ namespace Touhou_Daburu_W
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            //mInfoPrinter.Update(gameTime);
+            mInfoPrinter.Update(gameTime);
 
             spriteBatch.Begin();
-            //mBulletManager.Draw(spriteBatch);
-            //mEnemyManager.Draw(spriteBatch);
-            //mPlayerManager.Draw(spriteBatch);
-            //mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
-            //mInfoPrinter.DrawConnectionInfo(spriteBatch);
-            mMenuManager.Draw(spriteBatch);
+            
+
+            switch (mGameState)
+            {
+                case GameState.Playing:
+                    mBulletManager.Draw(spriteBatch);
+                    mEnemyManager.Draw(spriteBatch);
+                    mPlayerManager.Draw(spriteBatch);
+                    mInfoPrinter.DrawFrameTiming(spriteBatch, gameTime);
+                    mInfoPrinter.DrawConnectionInfo(spriteBatch);
+                    break;
+                case GameState.Paused:
+                    break;
+                case GameState.MainMenu:
+                    mMenuManager.Draw(spriteBatch);
+                    break;
+                case GameState.ScoreScreen:
+                    break;
+                default:
+                    break;
+            }
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -132,6 +156,19 @@ namespace Touhou_Daburu_W
                 mPlayerManager.InitAsMaster();
                 mNetworkManager.SetPlayerManager(mPlayerManager);
             }
+        }
+
+        private void HandleHostRequest(object sender, HostRequestedArgs a)
+        {
+            CreateNetServer(int.Parse(a.Port));
+            mGameState = GameState.Playing;
+        }
+
+        private void HandleConnectRequest(object sender, ConnectRequestArgs a)
+        {
+            CreateNetClient();
+            ConnectToServer(a.Ip, int.Parse(a.Port));
+            mGameState = GameState.Playing;
         }
 
         private void CreateNetClient()

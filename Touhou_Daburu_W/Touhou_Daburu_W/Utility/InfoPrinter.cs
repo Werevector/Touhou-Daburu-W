@@ -46,16 +46,12 @@ namespace Touhou_Daburu_W
 
         public void DrawConnectionInfo(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(font, "Create Server: I", new Vector2(650, 0), Color.White);
-            spriteBatch.DrawString(font, "Create Client: O", new Vector2(650, 15), Color.White);
-            spriteBatch.DrawString(font, "Connect To Server: P", new Vector2(630, 30), Color.White);
-
             if (mNetworkManager != null)
             {
                 if (mNetworkManager.IsHost())
-                    spriteBatch.DrawString(font, "Player Connected: " + mNetworkManager.IsConnected(), new Vector2(615, 50), Color.DarkGoldenrod);
+                    spriteBatch.DrawString(font, "Player Connected: " + mNetworkManager.IsConnected(), new Vector2(615, 10), Color.DarkGoldenrod);
                 else
-                    spriteBatch.DrawString(font, "Host Connected: " + mNetworkManager.IsConnected(), new Vector2(615, 50), Color.DarkGoldenrod);
+                    spriteBatch.DrawString(font, "Host Connected: " + mNetworkManager.IsConnected(), new Vector2(615, 10), Color.DarkGoldenrod);
             }
         }
          

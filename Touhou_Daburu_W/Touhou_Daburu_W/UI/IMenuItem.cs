@@ -20,5 +20,6 @@ namespace Touhou_Daburu_W.UI
         void SetPosition(Vector2 nPos);
         Vector2 GetPosition();
         Vector2 GetItemSpan();
+        void RedoItemSpan();
     }
 }

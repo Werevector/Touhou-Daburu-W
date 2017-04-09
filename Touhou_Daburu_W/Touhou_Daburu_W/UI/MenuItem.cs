@@ -60,5 +60,10 @@ namespace Touhou_Daburu_W.UI
         {
             mPosition = nPos; 
         }
+
+        virtual public void RedoItemSpan()
+        {
+            return;
+        }
     }
 }
