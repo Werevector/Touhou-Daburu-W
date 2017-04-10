@@ -31,7 +31,6 @@ namespace Touhou_Daburu_W
             SetEnemyManager(eManager);
             SetBulletManager(bManager);
             ReadStages();
-            LoadStage(mCurrentStage);
         }
 
         public void Update(GameTime gameTime)
@@ -54,6 +53,12 @@ namespace Touhou_Daburu_W
             }
 
             ProccessDestroyQueue();
+        }
+
+        public void Start()
+        {
+            mCurrentStage = 0;
+            LoadStage(mCurrentStage);
         }
 
         private void ProccessDestroyQueue()

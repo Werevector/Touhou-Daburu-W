@@ -4,6 +4,12 @@ using Microsoft.Xna.Framework.Input;
 
 using Touhou_Daburu_W.UI.Events;
 
+/*
+ * TODO:
+ *  - Make the NetworkManager a dormant manager
+ *  - Make the stage not start early.
+ */
+
 namespace Touhou_Daburu_W
 {
     public class BulletGame : Game
@@ -40,8 +46,6 @@ namespace Touhou_Daburu_W
         {
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
-            //graphics.PreferredBackBufferWidth = 3840;
-            //graphics.PreferredBackBufferHeight = 2160;
             //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
@@ -89,15 +93,6 @@ namespace Touhou_Daburu_W
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            //KeyboardState keyboard = Keyboard.GetState();
-            //if (keyboard.IsKeyDown(Keys.I))
-            //    CreateNetServer(port);
-            //if (keyboard.IsKeyDown(Keys.O))
-            //    CreateNetClient();
-            //if (keyboard.IsKeyDown(Keys.P))
-            //    ConnectToServer("localhost", port);
-
 
             mStageManager.Update(gameTime);
             mPlayerManager.Update(gameTime);
@@ -161,6 +156,7 @@ namespace Touhou_Daburu_W
         private void HandleHostRequest(object sender, HostRequestedArgs a)
         {
             CreateNetServer(int.Parse(a.Port));
+            mStageManager.Start();
             mGameState = GameState.Playing;
         }
 
@@ -168,6 +164,7 @@ namespace Touhou_Daburu_W
         {
             CreateNetClient();
             ConnectToServer(a.Ip, int.Parse(a.Port));
+            mStageManager.Start();
             mGameState = GameState.Playing;
         }
 
