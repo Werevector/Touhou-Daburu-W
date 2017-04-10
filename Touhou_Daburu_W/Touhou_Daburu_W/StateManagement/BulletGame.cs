@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using Touhou_Daburu_W.UI.Events;
 
 /*
- * TODO:
- *  - Make the NetworkManager a dormant manager
- *  - Make the stage not start early.
+ * TODO
+ *  
+ *
  */
 
 namespace Touhou_Daburu_W
@@ -56,6 +56,7 @@ namespace Touhou_Daburu_W
 
         private void InitManagers()
         {
+            mNetworkManager = new NetworkManager();
             mPlayerManager = new PlayerManager();
             mEnemyManager = new EnemyManager();
             mBulletManager = new BulletManager();
@@ -98,10 +99,7 @@ namespace Touhou_Daburu_W
             mPlayerManager.Update(gameTime);
             mEnemyManager.Update(gameTime);
             mBulletManager.Update(gameTime);
-            if (mNetworkManager != null)
-            {
-                mNetworkManager.Update();
-            }
+            mNetworkManager.Update();
 
             mMenuManager.Update(gameTime);
 
@@ -141,43 +139,25 @@ namespace Touhou_Daburu_W
             base.Draw(gameTime);
         }
 
-        private void CreateNetServer(int port)
-        {
-            if (mNetworkManager == null)
-            {
-                mNetworkManager = new NetworkManager();
-                mNetworkManager.InitAsServer(port); 
-                mInfoPrinter.mNetworkManager = mNetworkManager;
-                mPlayerManager.InitAsMaster();
-                mNetworkManager.SetPlayerManager(mPlayerManager);
-            }
-        }
-
         private void HandleHostRequest(object sender, HostRequestedArgs a)
         {
-            CreateNetServer(int.Parse(a.Port));
+            mNetworkManager.InitAsServer(int.Parse(a.Port));
+            mInfoPrinter.mNetworkManager = mNetworkManager;
+            mPlayerManager.InitAsMaster();
+            mNetworkManager.SetPlayerManager(mPlayerManager);
             mStageManager.Start();
             mGameState = GameState.Playing;
         }
 
         private void HandleConnectRequest(object sender, ConnectRequestArgs a)
         {
-            CreateNetClient();
+            mNetworkManager.InitAsClient();
+            mInfoPrinter.mNetworkManager = mNetworkManager;
+            mPlayerManager.InitAsSlave();
+            mNetworkManager.SetPlayerManager(mPlayerManager);
             ConnectToServer(a.Ip, int.Parse(a.Port));
             mStageManager.Start();
             mGameState = GameState.Playing;
-        }
-
-        private void CreateNetClient()
-        {
-            if (mNetworkManager == null)
-            {
-                mNetworkManager = new NetworkManager();
-                mNetworkManager.InitAsClient();
-                mInfoPrinter.mNetworkManager = mNetworkManager;
-                mPlayerManager.InitAsSlave();
-                mNetworkManager.SetPlayerManager(mPlayerManager);
-            }
         }
 
         private void ConnectToServer(string ip, int port)

@@ -24,6 +24,7 @@ namespace Touhou_Daburu_W
 
         bool mIsHost;
         bool mIsConnected;
+        bool mStarted;
         int mPort;
         NetPeerConfiguration mConfiguration;
         NetServer mHost;
@@ -34,6 +35,7 @@ namespace Touhou_Daburu_W
         {
             mIsHost = false;
             mIsConnected = false;
+            mStarted = false;
         }
 
         public void InitAsServer(int port)
@@ -43,6 +45,7 @@ namespace Touhou_Daburu_W
             mHost = new NetServer(mConfiguration);
             mPort = port;
             mHost.Start();
+            mStarted = true;
         }
 
         public void InitAsClient()
@@ -50,20 +53,22 @@ namespace Touhou_Daburu_W
             mConfiguration = new NetPeerConfiguration("daburu");
             mClient = new NetClient(mConfiguration);
             mClient.Start();
+            mStarted = true;
         }
 
         public void Connect(string ip, int port)
         {
             if (mClient != null)
-            {
                 mClient.Connect(ip, port); 
-            }
         }
 
         public void Update()
         {
-            ProccessMessages();
-            SendPlayerDataMessage();
+            if (mStarted)
+            {
+                ProccessMessages();
+                SendPlayerDataMessage();
+            }
         }
 
         private void SendDataToPlayerObject(Player player, NetIncomingMessage message)
