@@ -55,6 +55,7 @@
     <Compile Include="UI\MenuItem.cs" />
     <Compile Include="UI\StartMenu.cs" />
     <Compile Include="UI\TextInputItem.cs" />
+    <Compile Include="UI\WaitingMenu.cs" />
     <Compile Include="Utility\FrameCounter.cs" />
     <Compile Include="Utility\InfoPrinter.cs" />
     <Compile Include="Utility\InfoStructures.cs" />

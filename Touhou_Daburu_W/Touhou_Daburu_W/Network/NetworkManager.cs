@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Lidgren.Network;
+using Touhou_Daburu_W.UI.Events;
 namespace Touhou_Daburu_W
 {
     class NetworkManager
@@ -31,6 +32,9 @@ namespace Touhou_Daburu_W
         NetClient mClient;
         PlayerManager mPlayerManager;
 
+        public delegate void PlayerConnected(object sender);
+        public event PlayerConnected PlayerHasConnected;
+
         public NetworkManager()
         {
             mIsHost = false;
@@ -38,7 +42,7 @@ namespace Touhou_Daburu_W
             mStarted = false;
         }
 
-        public void InitAsServer(int port)
+        private void InitAsServer(int port)
         {
             mIsHost = true;
             mConfiguration = new NetPeerConfiguration("daburu") { Port = port };
@@ -46,6 +50,17 @@ namespace Touhou_Daburu_W
             mPort = port;
             mHost.Start();
             mStarted = true;
+        }
+
+        public void HandleHostRequest(object sender, HostRequestedArgs a)
+        {
+            InitAsServer(int.Parse(a.Port));
+        }
+
+        public void HandleClientRequest(object sender, ConnectRequestArgs a)
+        {
+            InitAsClient();
+            Connect(a.Ip, int.Parse(a.Port));
         }
 
         public void InitAsClient()
@@ -58,8 +73,10 @@ namespace Touhou_Daburu_W
 
         public void Connect(string ip, int port)
         {
-            if (mClient != null)
-                mClient.Connect(ip, port); 
+            if (mClient != null && mStarted)
+                mClient.Connect(ip, port);
+
+            PlayerHasConnected?.Invoke(this);
         }
 
         public void Update()
@@ -156,6 +173,7 @@ namespace Touhou_Daburu_W
                             case NetConnectionStatus.Connected:
                                 mIsConnected = true;
                                 mPlayerManager.InitConnectedPlayer();
+                                PlayerHasConnected?.Invoke(this);
                                 break;
                             case NetConnectionStatus.Disconnected:
                                 mIsConnected = false;

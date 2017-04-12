@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using Touhou_Daburu_W.UI.Events;
 
 
 namespace Touhou_Daburu_W
@@ -32,7 +33,17 @@ namespace Touhou_Daburu_W
             mNameToSequenceset = new Dictionary<string, Dictionary<string, SpriteSequenceData>>();
         }
 
-        public void InitAsMaster()
+        public void HandleHostRequest(object sender, HostRequestedArgs a)
+        {
+            InitAsMaster();
+        }
+
+        public void HandleClientRequest(object sender, ConnectRequestArgs a)
+        {
+            InitAsSlave();
+        }
+
+        private void InitAsMaster()
         {
             mPlayerOne = new Player();
             mPlayerOne.Init(mNameToAtlas["pl00"], "pl00", mNameToSequenceset["pl00"]);
@@ -41,7 +52,7 @@ namespace Touhou_Daburu_W
 
         }
 
-        public void InitAsSlave()
+        private void InitAsSlave()
         {
             mIsSlaveManager = true;
             mPlayerTwo = new Player();

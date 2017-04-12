@@ -21,6 +21,7 @@ namespace Touhou_Daburu_W.UI
         public delegate void SwitchToMain();
         public event HostPortReady PortIsReady;
         public event SwitchToMain switchToMain;
+        public event SwitchToMain waitingForConnection;
 
         public HostGameMenu(SpriteFont font, MenuManager manager)
         {
@@ -46,6 +47,7 @@ namespace Touhou_Daburu_W.UI
         private void ReadyHost()
         {
             PortIsReady?.Invoke(mHostPortTextField.GetText());
+            waitingForConnection?.Invoke();
         }
     }
 }

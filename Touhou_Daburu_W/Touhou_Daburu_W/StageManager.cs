@@ -24,6 +24,11 @@ namespace Touhou_Daburu_W
             mCurrentStage = 0;
         }
 
+        public void HandlePlayerConnected(object sender)
+        {
+            Start();
+        }
+
         public void Init(EnemyManager eManager, BulletManager bManager)
         {
             mGenerators = new List<EnemyGenerator>();

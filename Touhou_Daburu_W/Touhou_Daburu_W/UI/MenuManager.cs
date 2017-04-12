@@ -23,12 +23,14 @@ namespace Touhou_Daburu_W
             Host,
             Connect,
             Options,
-            Exited
+            Waiting,
+            Exit
         }
         SpriteFont font;
         StartMenu mStart;
         HostGameMenu mHost;
         ConnectGameMenu mConnect;
+        WaitingMenu mWait;
         GameWindow mWindow;
         MainMenuState mMenuState;
 
@@ -53,18 +55,23 @@ namespace Touhou_Daburu_W
             mHost = new HostGameMenu(font, this);
             mStart = new StartMenu(font, this);
             mConnect = new ConnectGameMenu(font, this);
+            mWait = new WaitingMenu(font, this);
 
             mStart.SwitchToHost     += SwitchToHost;
             mStart.SwitchToConnect  += SwitchToConnect;
             mHost.PortIsReady       += HostIsReady;
             mHost.switchToMain      += SwitchToMain;
+            mHost.waitingForConnection += SwitchToWaiting;
             mConnect.switchToMain   += SwitchToMain;
             mConnect.ConnectIsReady += ConnectIsReady;
         }
 
         public void Update(GameTime gameTime)
         {
-            
+            if(mMenuState == MainMenuState.Waiting)
+            {
+                mWait.Update(gameTime);
+            }
         }
 
         public void HandleInput(object sender, TextInputEventArgs e)
@@ -82,7 +89,9 @@ namespace Touhou_Daburu_W
                     break;
                 case MainMenuState.Options:
                     break;
-                case MainMenuState.Exited:
+                case MainMenuState.Waiting:
+                    break;
+                case MainMenuState.Exit:
                     break;
                 default:
                     break;
@@ -102,11 +111,19 @@ namespace Touhou_Daburu_W
                 case MainMenuState.Connect:
                     mConnect.Draw(spriteBatch, font, Color.White);
                     break;
+                case MainMenuState.Waiting:
+                    mWait.Draw(spriteBatch, font, Color.White);
+                    break;
                 case MainMenuState.Options:
                     break;
                 default:
                     break;
             }
+        }
+
+        public Vector2 GetWindowSize()
+        {
+            return new Vector2(mWindow.ClientBounds.Width, mWindow.ClientBounds.Height);
         }
 
         private void SwitchToHost()
@@ -124,6 +141,11 @@ namespace Touhou_Daburu_W
             mMenuState = MainMenuState.Connect;
         }
 
+        private void SwitchToWaiting()
+        {
+            mMenuState = MainMenuState.Waiting;
+        }
+
         private void SwitchState(MainMenuState state)
         {
             mMenuState = state;
@@ -131,13 +153,13 @@ namespace Touhou_Daburu_W
 
         private void HostIsReady(string port)
         {
-            mMenuState = MainMenuState.Exited;
+            mMenuState = MainMenuState.Exit;
             RequestedHost?.Invoke(this, new HostRequestedArgs(port));
         }
 
         private void ConnectIsReady(string ip, string port)
         {
-            mMenuState = MainMenuState.Exited;
+            mMenuState = MainMenuState.Exit;
             RequestedConnect?.Invoke(this, new ConnectRequestArgs(ip, port));
 
         }
