@@ -6,7 +6,6 @@ using Touhou_Daburu_W.UI.Events;
 
 /*
  * TODO
- *  - Refactor managers to only use events and delegates
  *
  */
 

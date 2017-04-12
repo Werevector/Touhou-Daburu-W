@@ -13,7 +13,6 @@ namespace Touhou_Daburu_W.UI
     class TextInputItem : MenuItem
     {
         private string mText;
-        private IMenuItem mParent;
 
         private const char ActivateChar = '\r';
         private const char DeleteChar = '\b';
@@ -43,7 +42,17 @@ namespace Touhou_Daburu_W.UI
 
         public override void Render(SpriteBatch sb, SpriteFont font, Color color)
         {
-            Vector2 renderPos = mPosition;
+            DrawContent(sb, font, mPosition, color);
+        }
+
+        public override void Render(SpriteBatch sb, SpriteFont font, Vector2 pos, Color color)
+        {
+            DrawContent(sb, font, pos, color);
+        }
+
+        private void DrawContent(SpriteBatch sb, SpriteFont font, Vector2 pos, Color color)
+        {
+            Vector2 renderPos = pos;
             try
             {
                 sb.DrawString(font, mText, mPosition, color);
@@ -51,10 +60,11 @@ namespace Touhou_Daburu_W.UI
             catch (ArgumentException)
             {
                 Console.Write(mText + " contains unsupported value");
-                mText = mText.Remove(mText.Length-1);
+                mText = mText.Remove(mText.Length - 1);
                 sb.DrawString(font, mText, mPosition, color);
             }
         }
+
         public void SetText(SpriteFont font, string text)
         {
             mText = text;

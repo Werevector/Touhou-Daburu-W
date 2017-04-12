@@ -76,7 +76,7 @@ namespace Touhou_Daburu_W
             if (mClient != null && mStarted)
                 mClient.Connect(ip, port);
 
-            PlayerHasConnected?.Invoke(this);
+            //PlayerHasConnected?.Invoke(this);
         }
 
         public void Update()

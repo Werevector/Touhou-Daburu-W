@@ -27,6 +27,7 @@ namespace Touhou_Daburu_W.UI
         public delegate void SwitchToMain();
         public event ConnectInfoReady ConnectIsReady;
         public event SwitchToMain switchToMain;
+        public event SwitchToMain waitingForConnection;
 
         public ConnectGameMenu(SpriteFont font, MenuManager manager)
         {
@@ -39,15 +40,15 @@ namespace Touhou_Daburu_W.UI
             mPortTextField = new TextInputItem(font, "8090", ReadyConnect);
 
             mItemListV1 = new ItemListSelectable(null, new Vector2(0,0), ItemListType.Horizontal);
-            mItemListV2 = new ItemListSelectable(null, new Vector2(0,0), ItemListType.Horizontal);
+            mItemListV2 = new ItemListSelectable(null, new Vector2(0,40), ItemListType.Horizontal);
 
             //mItemList = new ItemListSelectable(null, new Vector2(50, 50), ItemListType.Vertical,
             //    new List<IMenuItem> {
             //        mIPLabel, mIPTextField, mPortLabel, mPortTextField
             //    });
-            mItemList = new ItemListSelectable(null, new Vector2(50, 50), ItemListType.Vertical);
-            mItemList.AddItem(mItemListV1);
-            mItemList.AddItem(mItemListV2);
+            //mItemList = new ItemListSelectable(null, new Vector2(50, 50), ItemListType.Vertical);
+           // mItemList.AddItem(mItemListV1);
+            //mItemList.AddItem(mItemListV2);
             mItemListV1.AddItem(mIPLabel);
             mItemListV1.AddItem(mIPTextField);
             mItemListV2.AddItem(mPortLabel);
@@ -79,12 +80,14 @@ namespace Touhou_Daburu_W.UI
 
             //mPortLabel.Render(sb, font, Color.Cyan);
             //mPortTextField.Render(sb, font, color);
-            mItemList.Render(sb, font, color);
+            mItemListV1.Render(sb, font, color);
+            mItemListV2.Render(sb, font, color);
         }
 
         private void ReadyConnect()
         {
             ConnectIsReady?.Invoke(mIPTextField.GetText(), mPortTextField.GetText());
+            waitingForConnection?.Invoke();
         }
     }
 }

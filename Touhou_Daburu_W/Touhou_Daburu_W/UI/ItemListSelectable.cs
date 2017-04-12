@@ -32,6 +32,14 @@ namespace Touhou_Daburu_W.UI
             }
         }
 
+        public override void Render(SpriteBatch sb, SpriteFont font, Vector2 pos, Color color)
+        {
+            for (int i = 0; i < mItems.Count; i++)
+            {
+                mItems[i].Render(sb, font, pos, (i == mSelected ? Color.Red : color));
+            }
+        }
+
         virtual public void HandleInput(object sender, TextInputEventArgs e)
         {
             char charEntered = e.Character;

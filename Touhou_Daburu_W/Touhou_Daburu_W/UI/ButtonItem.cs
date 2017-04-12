@@ -46,6 +46,12 @@ namespace Touhou_Daburu_W.UI
             sb.DrawString(font, mText, mPosition, color);
         }
 
+        public override void Render(SpriteBatch sb, SpriteFont font, Vector2 pos, Color color)
+        {
+            Vector2 renderPos = pos;
+            sb.DrawString(font, mText, mPosition, color);
+        }
+
         public void SetText(SpriteFont font, string text)
         {
             mText = text;

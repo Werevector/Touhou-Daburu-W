@@ -64,6 +64,7 @@ namespace Touhou_Daburu_W
             mHost.waitingForConnection += SwitchToWaiting;
             mConnect.switchToMain   += SwitchToMain;
             mConnect.ConnectIsReady += ConnectIsReady;
+            mConnect.waitingForConnection += SwitchToWaiting;
         }
 
         public void Update(GameTime gameTime)

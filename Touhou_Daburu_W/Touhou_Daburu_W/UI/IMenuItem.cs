@@ -16,6 +16,7 @@ namespace Touhou_Daburu_W.UI
         void Link(ItemActivateDelegate activation);
         void SetParent(IMenuItem parent);
         void Render(SpriteBatch sb, SpriteFont font, Color color);
+        void Render(SpriteBatch sb, SpriteFont font, Vector2 pos, Color color);
         void SetPosition(float x, float y);
         void SetPosition(Vector2 nPos);
         Vector2 GetPosition();

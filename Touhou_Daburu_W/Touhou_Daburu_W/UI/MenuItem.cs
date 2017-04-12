@@ -13,7 +13,7 @@ namespace Touhou_Daburu_W.UI
         protected ItemActivateDelegate mItemFunction;
         protected Vector2 mPosition;
         protected Vector2 mItemRectDiag;
-        private IMenuItem mParent;
+        protected IMenuItem mParent;
 
         public MenuItem()
         {
@@ -47,6 +47,11 @@ namespace Touhou_Daburu_W.UI
 
         }
 
+        virtual public void Render(SpriteBatch sb, SpriteFont font, Vector2 pos, Color color)
+        {
+            Render(sb, font, color);
+        }
+
         public Vector2 GetPosition()
         {
             return mPosition;
@@ -65,5 +70,11 @@ namespace Touhou_Daburu_W.UI
         {
             return;
         }
+
+        virtual public void CheckItemPositions()
+        {
+            return;
+        }
+
     }
 }

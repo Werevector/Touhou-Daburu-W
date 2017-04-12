@@ -16,7 +16,6 @@ namespace Touhou_Daburu_W.UI
 
     class ItemList : MenuItem
     {
-        protected IMenuItem mParent;
         protected List<IMenuItem> mItems;
         protected ItemListType mType;
         public Vector2 itemPad { get; set; }
@@ -71,7 +70,8 @@ namespace Touhou_Daburu_W.UI
                 item.SetPosition(mPosition + itemPad);
             }
             mItems.Add(item);
-            CheckDiags(ref mItemRectDiag, item.GetItemSpan());
+            RedoItemSpan();
+            //CheckDiags(ref mItemRectDiag, item.GetItemSpan());
             if (mParent != null)
                 mParent.RedoItemSpan();
         }
@@ -109,6 +109,12 @@ namespace Touhou_Daburu_W.UI
         public override void RedoItemSpan()
         {
             CalculateListRectDiag();
+            CheckItemPositions();
+        }
+
+        public override void CheckItemPositions()
+        {
+            return;
         }
 
     }
