@@ -40,6 +40,9 @@ namespace Touhou_Daburu_W
         public delegate void PlayerRequestedConnect(object sender, ConnectRequestArgs connection);
         public event PlayerRequestedConnect RequestedConnect;
 
+        public delegate void PlayerRequestedDebug();
+        public event PlayerRequestedDebug RequestedDebug;
+
         public MenuManager(GameWindow window)
         {
             mMenuState = MainMenuState.Main;
@@ -59,6 +62,7 @@ namespace Touhou_Daburu_W
 
             mStart.SwitchToHost     += SwitchToHost;
             mStart.SwitchToConnect  += SwitchToConnect;
+            mStart.StartDebug       += StartDebug;
             mHost.PortIsReady       += HostIsReady;
             mHost.switchToMain      += SwitchToMain;
             mHost.waitingForConnection += SwitchToWaiting;
@@ -163,6 +167,11 @@ namespace Touhou_Daburu_W
             mMenuState = MainMenuState.Exit;
             RequestedConnect?.Invoke(this, new ConnectRequestArgs(ip, port));
 
+        }
+
+        private void StartDebug()
+        {
+            RequestedDebug?.Invoke();
         }
     }
 }

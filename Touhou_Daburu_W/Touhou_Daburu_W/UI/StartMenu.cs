@@ -16,6 +16,7 @@ namespace Touhou_Daburu_W.UI
         public delegate void SwitchMenu();
         public event SwitchMenu SwitchToConnect;
         public event SwitchMenu SwitchToHost;
+        public event SwitchMenu StartDebug;
 
         public StartMenu(SpriteFont font, MenuManager manager)
         {
@@ -23,7 +24,7 @@ namespace Touhou_Daburu_W.UI
                 new List<IMenuItem> {
                     new ButtonItem(font, "Connect to Game", Connect),
                     new ButtonItem(font, "Host Game", Host),
-                    new ButtonItem(font, "Options")
+                    new ButtonItem(font, "Start Debug", Debug)
                 });
         }
 
@@ -45,6 +46,11 @@ namespace Touhou_Daburu_W.UI
         private void Host()
         {
             SwitchToHost?.Invoke();
+        }
+
+        private void Debug()
+        {
+            StartDebug?.Invoke();
         }
 
     }

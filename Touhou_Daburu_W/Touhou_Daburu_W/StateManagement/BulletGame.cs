@@ -74,6 +74,7 @@ namespace Touhou_Daburu_W
             mMenuManager.RequestedHost += mPlayerManager.HandleHostRequest;
             mMenuManager.RequestedConnect += mNetworkManager.HandleClientRequest;
             mMenuManager.RequestedConnect += mPlayerManager.HandleClientRequest;
+            mMenuManager.RequestedDebug += HandleDebug;
             mNetworkManager.PlayerHasConnected += mStageManager.HandlePlayerConnected;
             mNetworkManager.PlayerHasConnected += HandlePlayerConnected;
         }
@@ -146,6 +147,14 @@ namespace Touhou_Daburu_W
 
         private void HandlePlayerConnected(object sender)
         {
+            mGameState = GameState.Playing;
+        }
+
+        private void HandleDebug()
+        {
+            //mPlayerManager.HandleHostRequest();
+            mPlayerManager.HandleHostRequest(this, new HostRequestedArgs("8070"));
+            mStageManager.Start();
             mGameState = GameState.Playing;
         }
     }
