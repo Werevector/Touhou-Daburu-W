@@ -9,10 +9,15 @@ using System.IO;
 using BulletEngineNeo.Graphics;
 using BulletEngineNeo.Bullet;
 
+using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Interop;
+using MoonSharp.Interpreter.Serialization;
+
 namespace BulletEngineNeo
 {
     /// <summary>
     /// This is the main type for your game.
+    /// 
     /// </summary>
     public class MainGameLogic : Game
     {
@@ -21,21 +26,29 @@ namespace BulletEngineNeo
 
         private Dictionary<string, SpriteAtlas> mEnemyNameToAtlasMap;
         private Dictionary<string, Dictionary<string, SpriteSequenceData>> mEnemyNameToSequencesetMap;
+        
+        BulletStorage mBullets;
+        
+        SpriteFont font;
 
-        private Dictionary<string, SpriteAtlas> mBulletNameToAtlasMap;
-
-        List<GameBullet> mBullets;
-
-        Enemy mTestEnemy;
-
+        public Rectangle mBulletArea;
         double mTick;
+
         public MainGameLogic()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             this.graphics.PreferredBackBufferHeight = 1080;
+            this.graphics.PreferredBackBufferWidth = 1920 / 2;
             this.Window.Position = new Point(0, 0);
             this.Window.IsBorderless = true;
+            int padding = 70;
+            mBulletArea.Width = this.graphics.PreferredBackBufferWidth + padding*2;
+            mBulletArea.Height = this.graphics.PreferredBackBufferHeight + padding*2;
+            mBulletArea.X = 0 - padding;
+            mBulletArea.Y = 0 - padding;
+
+            mBullets = new BulletStorage();
         }
 
         /// <summary>
@@ -46,11 +59,14 @@ namespace BulletEngineNeo
         /// </summary>
         protected override void Initialize()
         {
+            UserData.RegisterType<GameBullet>();
+            UserData.RegisterType<Vec2>();
+
             mTick = 0.0;   
             mEnemyNameToAtlasMap = new Dictionary<string, SpriteAtlas>();
             mEnemyNameToSequencesetMap = new Dictionary<string, Dictionary<string, SpriteSequenceData>>();
-            mBulletNameToAtlasMap = new Dictionary<string, SpriteAtlas>();
-            mBullets = new List<GameBullet>();
+
+            mBullets.Initialize();
             base.Initialize();
         }
 
@@ -60,10 +76,7 @@ namespace BulletEngineNeo
         /// </summary>
         private void PostLoadContentInitialize()
         {
-            mTestEnemy = new Enemy();
-            mTestEnemy.Position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height / 2);
-            mTestEnemy.SpriteName = "RedFairy";
-            mTestEnemy.Initialize(mEnemyNameToAtlasMap[mTestEnemy.SpriteName], mEnemyNameToSequencesetMap[mTestEnemy.SpriteName]);
+            
         }
 
         /// <summary>
@@ -72,10 +85,10 @@ namespace BulletEngineNeo
         /// </summary>
         protected override void LoadContent()
         {
-            
+            font = Content.Load<SpriteFont>("YuyukoFont");
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            LoadEnemyContent();
-            LoadBulletContent();
+            mBullets.LoadContent(this.Content);
+            
             PostLoadContentInitialize();
         }
 
@@ -97,44 +110,25 @@ namespace BulletEngineNeo
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            mTestEnemy.Update(gameTime);
+            mBullets.Update(gameTime, this);
+            
             mTick += gameTime.ElapsedGameTime.TotalSeconds;
-            double t = 1 / (double)1;
-            if(mTick > t)
+            double t = 1 / (double)15;
+            
+            if (mTick > t)
             {
                 GameBullet b = new GameBullet();
-                b.SpriteName = "Small7";
-                b.Initialize(mBulletNameToAtlasMap[b.SpriteName]);
-                b.Position = mTestEnemy.Position;
-                b.Velocity = new Vector2(100,0);
-                EffectFunction effectF = (GameBullet bullet, MainGameLogic game) =>
-                {
-                    bullet.BulletColor++;
-                    if (bullet.BulletColor > 15)
-                        bullet.BulletColor = 0;
-                };
-                BulletEffect bEffect = new BulletEffect();
+                b.mSpriteName = "Small4";
+                b.mBulletColor = 5;
+                b.mPosition.x = 200;
+                b.mPosition.y = 100;
+                b.mVelocity.x = 200;
+                b.mVelocity.y = 0;
 
-                EffectFunction effectF2 = (GameBullet bullet, MainGameLogic game) =>
-                {
-                    bullet.Velocity += new Vector2(-2f, 2);
-                };
-                BulletEffect bEffect2 = new BulletEffect();
-
-                bEffect.BulletEffectFunction = effectF;
-                bEffect2.BulletEffectFunction = effectF2;
-
-                b.AddOnUpdateEffect(bEffect);
-                b.AddOnUpdateEffect(bEffect2);
-                mBullets.Add(b);
+                mBullets.Add(b, gameTime, this);
                 mTick = 0.0;
             }
 
-            foreach (var bullet in mBullets)
-            {
-                bullet.Update(gameTime, this);
-            }
             base.Update(gameTime);
         }
 
@@ -146,13 +140,16 @@ namespace BulletEngineNeo
         {
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
-            mTestEnemy.Draw(gameTime, spriteBatch);
-            foreach (var bullet in mBullets)
-            {
-                bullet.Draw(gameTime, spriteBatch);
-            }
+            
+            mBullets.Draw(gameTime, spriteBatch);
+            spriteBatch.DrawString(font, mBullets.getCount().ToString(), new Vector2(0,0), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        public void DestroyBullet(int id)
+        {
+            mBullets.QueueDestroy(id);
         }
 
         private void LoadEnemyContent()
@@ -194,35 +191,6 @@ namespace BulletEngineNeo
                     }
                     mEnemyNameToSequencesetMap.Add(enemy.Key, sequenceMap);
                 }
-            }
-        }
-
-        private void LoadBulletContent()
-        {
-            string[] descriptors = System.IO.Directory.GetFiles("Descriptors/Images/Bullet/", "*.json", System.IO.SearchOption.TopDirectoryOnly);
-            foreach (var descriptor in descriptors)
-            {
-                ContentManager content = this.Content;
-                string aJson = File.ReadAllText(descriptor);
-                AtlasInfo aInfo = JsonConvert.DeserializeObject<AtlasInfo>(aJson);
-                SpriteAtlas spriteAtlas = new SpriteAtlas();
-                Texture2D image = content.Load<Texture2D>("Images/Bullet/" + aInfo.Image);
-                Dictionary<string, List<Rectangle>> clipMap = new Dictionary<string, List<Rectangle>>();
-                Dictionary<string, int> originMap = new Dictionary<string, int>();
-                foreach (var clipset in aInfo.ClipSets)
-                {
-                    List<Rectangle> clips = new List<Rectangle>();
-                    foreach (var clip in clipset.Set)
-                    {
-                        clips.Add(new Rectangle(clip[0], clip[1], clip[2], clip[3]));
-                    }
-                    clipMap.Add(clipset.Key, clips);
-                    //originMap.Add(clipset.Key, clipset.OriginAngle);
-                    originMap.Add(clipset.Key, 90);
-                    mBulletNameToAtlasMap.Add(clipset.Key, spriteAtlas);
-                }
-                spriteAtlas.SetImage(image);
-                spriteAtlas.SetClipMap(clipMap, originMap);
             }
         }
     }

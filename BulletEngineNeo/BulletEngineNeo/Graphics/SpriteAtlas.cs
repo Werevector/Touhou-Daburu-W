@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BulletEngineNeo.Graphics
 {
-    class SpriteAtlas
+    public class SpriteAtlas
     {
         private Texture2D mAtlas;
         private Dictionary<string, List<Rectangle>> mClipMap;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Touhou_Daburu_W
+namespace BulletEngineNeo
 {
 
     class Utility

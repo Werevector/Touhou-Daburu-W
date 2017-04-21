@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BulletEngineNeo.Graphics
 {
-    class SpriteSequenceData
+    public class SpriteSequenceData
     {
         public List<int> mSequence { get; set; }
         public bool mLooping { get; set; }

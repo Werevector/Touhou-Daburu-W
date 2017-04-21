@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using MoonSharp.Interpreter;
 
-namespace BulletEngineNeo.Bullet
+namespace BulletEngineNeo.ScriptEffects
 {
-    delegate bool EffectCondition();
-    delegate void EffectFunction(GameBullet bullet, MainGameLogic game);
-    class BulletEffect
+    public delegate bool EffectCondition();
+    public delegate void EffectFunction(DynValue bullet, MainGameLogic game);
+    public class ObjectEffect
     {
-        EffectCondition mEffectCondition;
-        EffectFunction mBulletEffect;
+        public EffectCondition mEffectCondition;
+        public EffectFunction mEffectFunction;
 
-        public EffectCondition BulletEffectCondition
+        public EffectCondition EffectCondition
         {
             get
             {
@@ -26,20 +27,20 @@ namespace BulletEngineNeo.Bullet
                 mEffectCondition = value;
             }
         }
-        public EffectFunction BulletEffectFunction
+        public EffectFunction EffectFunction
         {
             get
             {
-                return mBulletEffect;
+                return mEffectFunction;
             }
 
             set
             {
-                mBulletEffect = value;
+                mEffectFunction = value;
             }
         }
 
-        public BulletEffect() { }
+        public ObjectEffect() { }
 
         /// <summary>
         /// Checks the internal condition.
@@ -47,11 +48,11 @@ namespace BulletEngineNeo.Bullet
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="game"></param>
-        public void Check(GameTime gameTime, MainGameLogic game, GameBullet bullet)
+        public void Check(GameTime gameTime, MainGameLogic game, DynValue bullet)
         {
             if ((bool)mEffectCondition?.Invoke())
             {
-                mBulletEffect?.Invoke(bullet, game);
+                mEffectFunction?.Invoke(bullet, game);
             }
         }
 
@@ -60,9 +61,9 @@ namespace BulletEngineNeo.Bullet
         /// </summary>
         /// <param name="gameTime"></param>
         /// <param name="game"></param>
-        public void Force(GameTime gameTime, MainGameLogic game, GameBullet bullet)
+        public void Force(GameTime gameTime, MainGameLogic game, DynValue bullet)
         {
-            mBulletEffect?.Invoke(bullet, game);
+            mEffectFunction?.Invoke(bullet, game);
         }
     }
 }

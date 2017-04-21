@@ -41,9 +41,13 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Bullet\Bullet.cs" />
-    <Compile Include="Bullet\Effect.cs" />
-    <Compile Include="Enemy.cs" />
+    <Compile Include="Enemy\GameEnemy.cs" />
+    <Compile Include="Bullet\BulletStorage.cs" />
+    <Compile Include="Effect\EffectFactory.cs" />
+    <Compile Include="Bullet\GameBullet.cs" />
+    <Compile Include="Effect\ObjectEffect.cs" />
+    <Compile Include="Effect\EffectFunctionStorage.cs" />
+    <Compile Include="DirectoryMonitor.cs" />
     <Compile Include="Graphics\GraphicalInfoStructures.cs" />
     <Compile Include="Graphics\SpriteAnimationManager.cs" />
     <Compile Include="Graphics\SpriteAtlas.cs" />
@@ -52,14 +56,16 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
+    <Compile Include="Vec2.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DynamicLua, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DynamicLua.1.1.2.0\lib\net40-Client\DynamicLua.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
+      <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
